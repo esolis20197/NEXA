@@ -1,0 +1,51 @@
+﻿@model LoginModeloUsuario
+
+@{
+    ViewData["Title"] = "Inicio de Sesión";
+}
+<section class="d-flex justify-content-center align-items-center" style="min-height: 100vh;">
+    <div class="container">
+        <div class="row w-100">
+            <div class="col-md-6 offset-md-3">
+                <div class="card shadow-lg p-4">
+                    <h2 class="text-center mb-4">Iniciar Sesión</h2>
+                    <form asp-action="InicioSesion" method="post">
+                        <div class="mb-3">
+                            <label asp-for="Correo" class="form-label">Correo Electrónico</label>
+                            <input asp-for="Correo" class="form-control" placeholder="Ingresa tu correo" required />
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="Contraseña" class="form-label">Contraseña</label>
+                            <input asp-for="Contraseña" type="password" class="form-control" placeholder="Ingresa tu contraseña" required />
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Iniciar Sesión</button>
+                    </form>
+                    <div class="text-center mt-3">
+                        <p>¿Aún no tienes una cuenta? <a asp-controller="Acceso" asp-action="RegistroUsuario">Registrarse</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        @if (TempData["MensajeInicioFallido"] != null)
+        {
+            <text>
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error de inicio de sesión',
+                        text: '@TempData["MensajeInicioFallido"]',
+                        confirmButtonColor: '#d33',
+                        confirmButtonText: 'Intentar de nuevo'
+                    });
+            </text>
+        }
+    </script>
+}

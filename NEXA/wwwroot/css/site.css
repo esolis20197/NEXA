@@ -1,0 +1,71 @@
+/* Fuente base: Roboto */
+html {
+    font-size: 14px;
+    font-family: 'Roboto', sans-serif;
+    position: relative;
+    min-height: 100%;
+}
+
+@media (min-width: 768px) {
+    html {
+        font-size: 16px;
+    }
+}
+
+/* Cuerpo con margen inferior */
+body {
+    margin-bottom: 60px;
+    background-color: #ebf3fc; /* Fondo suave */
+    color: #0c3b5e; /* Color de texto principal */
+}
+
+/* Tipografía personalizada por jerarquía */
+h1, .title-primary {
+    font-weight: 700; /* Roboto Bold */
+    color: #0c3b5e;
+}
+
+h2, h3, .title-secondary {
+    font-weight: 500; /* Roboto Medium */
+    color: #0f548c;
+}
+
+p, .text-plain {
+    font-weight: 400; /* Roboto Regular */
+    color: #0c3b5e;
+}
+
+a, .accent, .link {
+    font-weight: 100; /* Roboto Thin */
+    color: #2886de;
+    text-decoration: none;
+}
+
+    a:hover, .link:hover {
+        text-decoration: underline;
+    }
+
+/* Estilo de enfoque accesible */
+.btn:focus,
+.btn:active:focus,
+.btn-link.nav-link:focus,
+.form-control:focus,
+.form-check-input:focus {
+    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+/* Botones principales */
+.btn-primary {
+    background-color: #2886de;
+    border-color: #2886de;
+    color: #ffffff;
+}
+
+    .btn-primary:hover {
+        background-color: #0f548c;
+        border-color: #0f548c;
+    }
+
+    .btn-primary:focus {
+        box-shadow: 0 0 0 0.2rem rgba(40, 134, 222, 0.5);
+    }

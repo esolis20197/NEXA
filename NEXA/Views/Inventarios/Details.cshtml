@@ -1,0 +1,65 @@
+﻿@model NEXA.Models.Inventario
+@using Microsoft.AspNetCore.Http
+@{
+    var usuarioRol = Context.Session.GetString("UsuarioRol");
+    bool esAdministrador = usuarioRol == "Administrador";
+}
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4>Inventario</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.FotoUrl)
+        </dt>
+        <dd class="col-sm-10">
+            @if (!string.IsNullOrEmpty(Model.FotoUrl))
+            {
+                <img src="@Model.FotoUrl" alt="Imagen de @Model.Nombre" style="max-width: 300px; max-height: 300px;" />
+            }
+            else
+            {
+                <span>No disponible</span>
+            }
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Nombre)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Nombre)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Descripcion)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Descripcion)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Precio)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Precio)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Stock)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Stock)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.tipo)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.tipo)
+        </dd>
+    </dl>
+</div>
+<div>
+    
+    <a asp-action="IndexCliente">Back to List</a>
+</div>

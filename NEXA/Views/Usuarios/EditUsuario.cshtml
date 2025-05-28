@@ -1,0 +1,73 @@
+﻿@model NEXA.Models.Usuario
+
+@{
+    ViewData["Title"] = "Editar Usuario";
+}
+<section class="py-5">
+    <div class="container px-4 px-lg-5 my-5">
+        <div class="row gx-4 gx-lg-5 align-items-stretch">
+            
+            <!-- IMAGEN -->
+            <div class="col-md-6 d-flex">
+                <img class="img-fluid rounded w-100"
+                     src="https://images.pexels.com/photos/17309932/pexels-photo-17309932/free-photo-of-ciudad-techo-urbano-esfera.jpeg?auto=compress&cs=tinysrgb&w=600"
+                     alt="Imagen de Usuario"
+                     style="object-fit: cover; height: 100%; border-radius: 10px;" />
+            </div>
+
+            <!-- FORMULARIO -->
+            <div class="col-md-6 d-flex">
+                <div class="card shadow-lg p-4 w-100" style="height: 100%;">
+                    <h2 class="text-center mb-4">Editar Usuario</h2>
+
+                    <form asp-action="EditUsuario">
+                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+                        <input type="hidden" asp-for="Id" />
+                        <input type="hidden" asp-for="Rol" />
+
+                        <div class="mb-3">
+                            <label asp-for="NombreUsuario" class="form-label"></label>
+                            <input asp-for="NombreUsuario" class="form-control" />
+                            <span asp-validation-for="NombreUsuario" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Correo" class="form-label"></label>
+                            <input asp-for="Correo" class="form-control" />
+                            <span asp-validation-for="Correo" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Cedula" class="form-label"></label>
+                            <input asp-for="Cedula" class="form-control" />
+                            <span asp-validation-for="Cedula" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Telefono" class="form-label"></label>
+                            <input asp-for="Telefono" class="form-control" />
+                            <span asp-validation-for="Telefono" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Contraseña" class="form-label"></label>
+                            <input asp-for="Contraseña" class="form-control" type="password" />
+                            <span asp-validation-for="Contraseña" class="text-danger"></span>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100 mt-3">
+                            <i class="bi bi-save me-2"></i> Guardar Cambios
+                        </button>
+                    </form>
+
+                    <form asp-action="Perfil" method="get">
+                        <button type="submit" class="btn btn-outline-secondary w-100 mt-3 rounded-pill">
+                            <i class="bi bi-arrow-left-circle me-2"></i> Volver
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
