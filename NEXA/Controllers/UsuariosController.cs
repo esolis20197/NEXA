@@ -6,9 +6,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using NEXA.Models;
+using NEXA.Filters;
 
 namespace NEXA.Controllers
 {
+    [FiltroSeguridad]
     public class UsuariosController : Controller
     {
         private readonly NEXAContext _context;
@@ -144,27 +146,12 @@ namespace NEXA.Controllers
                 usuarioDb.Cedula = model.Cedula;
                 usuarioDb.Telefono = model.Telefono;
 
-                if (!string.IsNullOrWhiteSpace(model.Contraseña))
-                {
-                    usuarioDb.Contraseña = model.Contraseña;
-                }
-
                 _context.SaveChanges();
                 return RedirectToAction("Perfil");
             }
 
             return View(model);
         }
-
-
-
-
-
-
-
-
-
-
 
         // GET: Usuarios/Delete/5
         public async Task<IActionResult> Delete(int? id)
@@ -224,8 +211,50 @@ namespace NEXA.Controllers
             return View(usuario);
         }
 
+        public async Task<IActionResult> EditContrasena(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
 
+            var usuario = await _context.Usuario.FindAsync(id);
+            if (usuario == null)
+            {
+                return NotFound();
+            }
 
+            return View(usuario);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult EditContrasena(int id, string ContrasenaActual, string NuevaContrasena, string ConfirmarContrasena)
+        {
+            var usuarioDb = _context.Usuario.FirstOrDefault(u => u.Id == id);
+
+            if (usuarioDb != null)
+            {
+                if (usuarioDb.Contraseña != ContrasenaActual)
+                {
+                    ModelState.AddModelError("ContrasenaActual", "La contraseña actual es incorrecta.");
+                    return View(usuarioDb);
+                }
+
+                if (NuevaContrasena != ConfirmarContrasena)
+                {
+                    ModelState.AddModelError("ConfirmarContrasena", "La nueva contraseña y la confirmación no coinciden.");
+                    return View(usuarioDb);
+                }
+
+                usuarioDb.Contraseña = NuevaContrasena;
+
+                _context.SaveChanges();
+                return RedirectToAction("Perfil");
+            }
+
+            return View();
+        }
 
     }
 }

@@ -17,107 +17,113 @@ build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property.RootNamespace = NEXA
 build_property.RootNamespace = NEXA
-build_property.ProjectDir = C:\Users\joseb\OneDrive\Documentos\3-Diseño y Desarrollo de Sistemas\NEXA\NEXA\
+build_property.ProjectDir = C:\GITHUB\NEXA\NEXA\
 build_property.EnableComHosting = 
 build_property.EnableGeneratedComInterfaceComImportInterop = 
 build_property.RazorLangVersion = 8.0
 build_property.SupportLocalizedComponentNames = 
 build_property.GenerateRazorMetadataSourceChecksumAttributes = 
-build_property.MSBuildProjectDirectory = C:\Users\joseb\OneDrive\Documentos\3-Diseño y Desarrollo de Sistemas\NEXA\NEXA
+build_property.MSBuildProjectDirectory = C:\GITHUB\NEXA\NEXA
 build_property._RazorSourceGeneratorDebug = 
+build_property.EffectiveAnalysisLevelStyle = 8.0
+build_property.EnableCodeStyleSeverity = 
 
-[C:/Users/joseb/OneDrive/Documentos/3-Diseño y Desarrollo de Sistemas/NEXA/NEXA/Views/Acceso/InicioSesion.cshtml]
+[C:/GITHUB/NEXA/NEXA/Views/Acceso/InicioSesion.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjZXNvXEluaWNpb1Nlc2lvbi5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/joseb/OneDrive/Documentos/3-Diseño y Desarrollo de Sistemas/NEXA/NEXA/Views/Acceso/RegistroUsuario.cshtml]
+[C:/GITHUB/NEXA/NEXA/Views/Acceso/RegistroUsuario.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjZXNvXFJlZ2lzdHJvVXN1YXJpby5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/joseb/OneDrive/Documentos/3-Diseño y Desarrollo de Sistemas/NEXA/NEXA/Views/Home/Index.cshtml]
+[C:/GITHUB/NEXA/NEXA/Views/Home/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxJbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/joseb/OneDrive/Documentos/3-Diseño y Desarrollo de Sistemas/NEXA/NEXA/Views/Home/IndexCliente.cshtml]
+[C:/GITHUB/NEXA/NEXA/Views/Home/IndexCliente.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxJbmRleENsaWVudGUuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/joseb/OneDrive/Documentos/3-Diseño y Desarrollo de Sistemas/NEXA/NEXA/Views/Home/IndexEmpleado.cshtml]
+[C:/GITHUB/NEXA/NEXA/Views/Home/IndexEmpleado.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxJbmRleEVtcGxlYWRvLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/joseb/OneDrive/Documentos/3-Diseño y Desarrollo de Sistemas/NEXA/NEXA/Views/Home/Privacy.cshtml]
+[C:/GITHUB/NEXA/NEXA/Views/Home/Privacy.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxQcml2YWN5LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/joseb/OneDrive/Documentos/3-Diseño y Desarrollo de Sistemas/NEXA/NEXA/Views/Inventarios/Create.cshtml]
+[C:/GITHUB/NEXA/NEXA/Views/Inventarios/Create.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSW52ZW50YXJpb3NcQ3JlYXRlLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/joseb/OneDrive/Documentos/3-Diseño y Desarrollo de Sistemas/NEXA/NEXA/Views/Inventarios/Delete.cshtml]
+[C:/GITHUB/NEXA/NEXA/Views/Inventarios/Delete.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSW52ZW50YXJpb3NcRGVsZXRlLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/joseb/OneDrive/Documentos/3-Diseño y Desarrollo de Sistemas/NEXA/NEXA/Views/Inventarios/Details.cshtml]
+[C:/GITHUB/NEXA/NEXA/Views/Inventarios/Details.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSW52ZW50YXJpb3NcRGV0YWlscy5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/joseb/OneDrive/Documentos/3-Diseño y Desarrollo de Sistemas/NEXA/NEXA/Views/Inventarios/Edit.cshtml]
+[C:/GITHUB/NEXA/NEXA/Views/Inventarios/Edit.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSW52ZW50YXJpb3NcRWRpdC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/joseb/OneDrive/Documentos/3-Diseño y Desarrollo de Sistemas/NEXA/NEXA/Views/Inventarios/Index.cshtml]
+[C:/GITHUB/NEXA/NEXA/Views/Inventarios/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSW52ZW50YXJpb3NcSW5kZXguY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/joseb/OneDrive/Documentos/3-Diseño y Desarrollo de Sistemas/NEXA/NEXA/Views/Inventarios/IndexCliente.cshtml]
+[C:/GITHUB/NEXA/NEXA/Views/Inventarios/IndexCliente.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSW52ZW50YXJpb3NcSW5kZXhDbGllbnRlLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/joseb/OneDrive/Documentos/3-Diseño y Desarrollo de Sistemas/NEXA/NEXA/Views/Shared/Error.cshtml]
+[C:/GITHUB/NEXA/NEXA/Views/Shared/Error.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXEVycm9yLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/joseb/OneDrive/Documentos/3-Diseño y Desarrollo de Sistemas/NEXA/NEXA/Views/Shared/_ValidationScriptsPartial.cshtml]
+[C:/GITHUB/NEXA/NEXA/Views/Shared/_ValidationScriptsPartial.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9WYWxpZGF0aW9uU2NyaXB0c1BhcnRpYWwuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/joseb/OneDrive/Documentos/3-Diseño y Desarrollo de Sistemas/NEXA/NEXA/Views/Usuarios/Create.cshtml]
+[C:/GITHUB/NEXA/NEXA/Views/Usuarios/Create.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVXN1YXJpb3NcQ3JlYXRlLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/joseb/OneDrive/Documentos/3-Diseño y Desarrollo de Sistemas/NEXA/NEXA/Views/Usuarios/Delete.cshtml]
+[C:/GITHUB/NEXA/NEXA/Views/Usuarios/Delete.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVXN1YXJpb3NcRGVsZXRlLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/joseb/OneDrive/Documentos/3-Diseño y Desarrollo de Sistemas/NEXA/NEXA/Views/Usuarios/Details.cshtml]
+[C:/GITHUB/NEXA/NEXA/Views/Usuarios/Details.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVXN1YXJpb3NcRGV0YWlscy5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/joseb/OneDrive/Documentos/3-Diseño y Desarrollo de Sistemas/NEXA/NEXA/Views/Usuarios/Edit.cshtml]
+[C:/GITHUB/NEXA/NEXA/Views/Usuarios/Edit.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVXN1YXJpb3NcRWRpdC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/joseb/OneDrive/Documentos/3-Diseño y Desarrollo de Sistemas/NEXA/NEXA/Views/Usuarios/EditUsuario.cshtml]
+[C:/GITHUB/NEXA/NEXA/Views/Usuarios/EditContrasena.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVXN1YXJpb3NcRWRpdENvbnRyYXNlbmEuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/GITHUB/NEXA/NEXA/Views/Usuarios/EditUsuario.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVXN1YXJpb3NcRWRpdFVzdWFyaW8uY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/joseb/OneDrive/Documentos/3-Diseño y Desarrollo de Sistemas/NEXA/NEXA/Views/Usuarios/Index.cshtml]
+[C:/GITHUB/NEXA/NEXA/Views/Usuarios/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVXN1YXJpb3NcSW5kZXguY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/joseb/OneDrive/Documentos/3-Diseño y Desarrollo de Sistemas/NEXA/NEXA/Views/Usuarios/Perfil.cshtml]
+[C:/GITHUB/NEXA/NEXA/Views/Usuarios/Perfil.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVXN1YXJpb3NcUGVyZmlsLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/joseb/OneDrive/Documentos/3-Diseño y Desarrollo de Sistemas/NEXA/NEXA/Views/_ViewImports.cshtml]
+[C:/GITHUB/NEXA/NEXA/Views/_ViewImports.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcX1ZpZXdJbXBvcnRzLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/joseb/OneDrive/Documentos/3-Diseño y Desarrollo de Sistemas/NEXA/NEXA/Views/_ViewStart.cshtml]
+[C:/GITHUB/NEXA/NEXA/Views/_ViewStart.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcX1ZpZXdTdGFydC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/joseb/OneDrive/Documentos/3-Diseño y Desarrollo de Sistemas/NEXA/NEXA/Views/Shared/_Layout.cshtml]
+[C:/GITHUB/NEXA/NEXA/Views/Shared/_Layout.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9MYXlvdXQuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = b-jkxlhiehkt

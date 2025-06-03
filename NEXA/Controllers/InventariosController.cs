@@ -6,9 +6,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using NEXA.Models;
+using NEXA.Filters;
 
 namespace NEXA.Controllers
 {
+    [FiltroSeguridad]
     public class InventariosController : Controller
     {
         private readonly NEXAContext _context;
