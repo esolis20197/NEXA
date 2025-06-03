@@ -6,14 +6,14 @@ namespace NEXA.Models
     {
         [Key]
         public int Id { get; set; }
-        public string NombreUsuario { get; set; }
-        public string NombreCompleto { get; set; }
-        public string Correo { get; set; }
-        public string Cedula { get; set; }
+        public required string NombreUsuario { get; set; }
+        public required string NombreCompleto { get; set; }
+        public required string Correo { get; set; }
+        public required string Cedula { get; set; }
 
-        public string Telefono { get; set; }
-        public string Contraseña { get; set; }
-        public string Rol { get; set; }  // Administrador, Usuario
+        public required string Telefono { get; set; }
+        public required string Contraseña { get; set; }
+        public required string Rol { get; set; }  // Administrador, Usuario
 
     }
 }

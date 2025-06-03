@@ -10,6 +10,7 @@ namespace NEXA.Models
         public NEXAContext(DbContextOptions<NEXAContext> options) : base(options) { }
         public DbSet<Usuario> Usuario { get; set; }
         public DbSet<Inventario> Inventario { get; set; }
+        public DbSet<PasswordResetToken> PasswordResetTokens { get; set; }
 
     }
 }

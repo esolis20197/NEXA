@@ -4,50 +4,41 @@
     ViewData["Title"] = "Registro de Usuario";
 }
 
-
-
 <section class="d-flex justify-content-center align-items-center" style="min-height: 100vh;">
-    <div class="container">
-        <div class="row w-100">
-            <div class="col-md-6 offset-md-3">
-                <div class="card shadow-lg p-4">
-                    <h2 class="text-center mb-4">Registro de Usuario</h2>
-                    <form asp-controller="Acceso" asp-action="RegistroUsuario" method="post">
-                        <div class="mb-3">
-                            <label asp-for="NombreUsuario" class="form-label">Nombre de Usuario</label>
-                            <input asp-for="NombreUsuario" class="form-control" placeholder="Ingresa tu usuario" required />
-                        </div>
-                        <div class="mb-3">
-                            <label asp-for="Cedula" class="form-label">Cédula de Identidad</label>
-                            <input asp-for="Cedula" id="cedulaInput" type="text" class="form-control" placeholder="Ingresa tu cédula (111110111)" required />
-                        </div>
-                        <div class="mb-3">
-                            <label asp-for="NombreCompleto" class="form-label">Nombre Completo</label>
-                            <input asp-for="NombreCompleto" id="nombreCompleto" class="form-control" placeholder="Ingresa tu nombre completo" readonly required />
-                        </div>
-                        <div class="mb-3">
-                            <label asp-for="Correo" class="form-label">Correo Electrónico</label>
-                            <input asp-for="Correo" type="email" class="form-control" placeholder="Ingresa tu correo" required />
-                        </div>
-                        <div class="mb-3">
-                            <label asp-for="Telefono" class="form-label">Teléfono</label>
-                            <input asp-for="Telefono" type="text" class="form-control" pattern="\d{8}" title="Debe contener 8 dígitos" placeholder="Ingresa tu teléfono" required />
-                        </div>
-                        <div class="mb-3">
-                            <label asp-for="Contraseña" class="form-label">Contraseña</label>
-                            <input asp-for="Contraseña" type="password" class="form-control" placeholder="Ingresa tu contraseña" required />
-                        </div>
-                        <button type="submit" class="btn btn-primary w-100">Registrarse</button>
-                    </form>
-                    <div class="text-center mt-3">
-                        <p>¿Ya tienes una cuenta? <a asp-controller="Acceso" asp-action="InicioSesion">Iniciar Sesión</a></p>
-                    </div>
-                </div>
+    <div class="card shadow-lg p-4" style="width: 100%; max-width: 600px;">
+        <h2 class="text-center mb-4">Registro de Usuario</h2>
+        <form asp-controller="Acceso" asp-action="RegistroUsuario" method="post">
+            <div class="mb-3">
+                <label asp-for="NombreUsuario" class="form-label">Nombre de Usuario</label>
+                <input asp-for="NombreUsuario" class="form-control" placeholder="Ingresa tu usuario" required />
             </div>
+            <div class="mb-3">
+                <label asp-for="Cedula" class="form-label">Cédula de Identidad</label>
+                <input asp-for="Cedula" id="cedulaInput" type="text" class="form-control" placeholder="Ingresa tu cédula (111110111)" required />
+            </div>
+            <div class="mb-3">
+                <label asp-for="NombreCompleto" class="form-label">Nombre Completo</label>
+                <input asp-for="NombreCompleto" id="nombreCompleto" class="form-control" placeholder="Ingresa tu nombre completo" readonly required />
+            </div>
+            <div class="mb-3">
+                <label asp-for="Correo" class="form-label">Correo Electrónico</label>
+                <input asp-for="Correo" type="email" class="form-control" placeholder="Ingresa tu correo" required />
+            </div>
+            <div class="mb-3">
+                <label asp-for="Telefono" class="form-label">Teléfono</label>
+                <input asp-for="Telefono" type="text" class="form-control" pattern="\d{8}" title="Debe contener 8 dígitos" placeholder="Ingresa tu teléfono" required />
+            </div>
+            <div class="mb-3">
+                <label asp-for="Contraseña" class="form-label">Contraseña</label>
+                <input asp-for="Contraseña" type="password" class="form-control" placeholder="Ingresa tu contraseña" required />
+            </div>
+            <button type="submit" class="btn btn-primary w-100">Registrarse</button>
+        </form>
+        <div class="text-center mt-3">
+            <p>¿Ya tienes una cuenta? <a asp-controller="Acceso" asp-action="InicioSesion">Iniciar Sesión</a></p>
         </div>
     </div>
 </section>
-
 
 @section Scripts {
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -83,9 +74,9 @@
                 }
             });
 
-        @if (TempData["MensajeRegistroCorrecto"] != null)
-        {
-            <text>
+            @if (TempData["MensajeRegistroCorrecto"] != null)
+            {
+                    <text>
                         Swal.fire({
                             icon: 'success',
                             title: '¡Registro exitoso!',
@@ -93,12 +84,12 @@
                             confirmButtonColor: '#3085d6',
                             confirmButtonText: 'Aceptar'
                         });
-            </text>
-        }
+                    </text>
+            }
 
-        @if (TempData["MensajeRegistroIncorrecto"] != null)
-        {
-            <text>
+            @if (TempData["MensajeRegistroIncorrecto"] != null)
+            {
+                    <text>
                         Swal.fire({
                             icon: 'error',
                             title: 'Error en el registro',
@@ -106,10 +97,8 @@
                             confirmButtonColor: '#d33',
                             confirmButtonText: 'Intentar de nuevo'
                         });
-            </text>
-        }
+                    </text>
+            }
         });
     </script>
 }
-
-

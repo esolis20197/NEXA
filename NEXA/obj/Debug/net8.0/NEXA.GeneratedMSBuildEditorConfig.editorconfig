@@ -32,8 +32,20 @@ build_property.EnableCodeStyleSeverity =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjZXNvXEluaWNpb1Nlc2lvbi5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
+[C:/GITHUB/NEXA/NEXA/Views/Acceso/RecuperarContrasena.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjZXNvXFJlY3VwZXJhckNvbnRyYXNlbmEuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
 [C:/GITHUB/NEXA/NEXA/Views/Acceso/RegistroUsuario.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjZXNvXFJlZ2lzdHJvVXN1YXJpby5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/GITHUB/NEXA/NEXA/Views/Acceso/RestablecerContrasena.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjZXNvXFJlc3RhYmxlY2VyQ29udHJhc2VuYS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/GITHUB/NEXA/NEXA/Views/Acceso/ValidarToken.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjZXNvXFZhbGlkYXJUb2tlbi5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/GITHUB/NEXA/NEXA/Views/Home/Index.cshtml]

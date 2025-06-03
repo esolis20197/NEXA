@@ -534,3 +534,5 @@ C:\GITHUB\NEXA\NEXA\bin\Debug\net8.0\zh-Hans\Microsoft.CodeAnalysis.Workspaces.M
 C:\GITHUB\NEXA\NEXA\bin\Debug\net8.0\zh-Hant\Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.resources.dll
 C:\GITHUB\NEXA\NEXA\bin\Debug\net8.0\runtimes\browser\lib\net8.0\System.Text.Encodings.Web.dll
 C:\GITHUB\NEXA\NEXA\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt
+C:\GITHUB\NEXA\NEXA\bin\Debug\net8.0\Firebase.Auth.dll
+C:\GITHUB\NEXA\NEXA\bin\Debug\net8.0\Firebase.Storage.dll

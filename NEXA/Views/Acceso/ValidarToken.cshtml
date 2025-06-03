@@ -1,0 +1,26 @@
+﻿@{
+    ViewData["Title"] = "Validar Código";
+}
+
+<div class="d-flex justify-content-center mt-5 mb-5 px-3">
+    <div class="card shadow-lg p-4" style="width: 100%; max-width: 600px;">
+        <h2 class="text-center mb-4">Código de Recuperación</h2>
+        <form asp-action="ValidarToken" method="post">
+            <div class="mb-3 text-center">
+                <label for="token" class="form-label">Ingresa el código que recibiste por correo</label>
+                <input type="text" id="token" name="token" class="form-control" required />
+            </div>
+            <button type="submit" class="btn btn-primary w-100">Validar</button>
+
+            @if (!ViewData.ModelState.IsValid)
+            {
+                <div class="text-danger mt-3">
+                    @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                    {
+                        <p>@error.ErrorMessage</p>
+                    }
+                </div>
+            }
+        </form>
+    </div>
+</div>

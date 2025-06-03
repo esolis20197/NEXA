@@ -18,6 +18,9 @@ builder.Services.AddSession(options =>
     options.Cookie.IsEssential = true; // Necesario para que funcione en GDPR-compliance
 });
 
+// EMAIL RECUPERAR CONTRASEÑA
+builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
+builder.Services.AddTransient<EmailService>();
 
 //Agrega la API
 builder.Services.AddHttpClient<GometaApiService>();

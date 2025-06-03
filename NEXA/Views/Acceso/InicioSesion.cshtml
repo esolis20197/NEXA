@@ -3,49 +3,68 @@
 @{
     ViewData["Title"] = "Inicio de Sesión";
 }
-<section class="d-flex justify-content-center align-items-center" style="min-height: 100vh;">
-    <div class="container">
-        <div class="row w-100">
-            <div class="col-md-6 offset-md-3">
-                <div class="card shadow-lg p-4">
-                    <h2 class="text-center mb-4">Iniciar Sesión</h2>
-                    <form asp-action="InicioSesion" method="post">
-                        <div class="mb-3">
-                            <label asp-for="Correo" class="form-label">Correo Electrónico</label>
-                            <input asp-for="Correo" class="form-control" placeholder="Ingresa tu correo" required />
-                        </div>
-                        <div class="mb-3">
-                            <label asp-for="Contraseña" class="form-label">Contraseña</label>
-                            <input asp-for="Contraseña" type="password" class="form-control" placeholder="Ingresa tu contraseña" required />
-                        </div>
-                        <button type="submit" class="btn btn-primary w-100">Iniciar Sesión</button>
-                    </form>
-                    <div class="text-center mt-3">
-                        <p>¿Aún no tienes una cuenta? <a asp-controller="Acceso" asp-action="RegistroUsuario">Registrarse</a></p>
-                    </div>
-                </div>
+
+<div class="d-flex justify-content-center mt-5">
+    <div class="card shadow-lg p-4" style="width: 100%; max-width: 600px;">
+        <h2 class="text-center mb-4">Iniciar Sesión</h2>
+        <form asp-action="InicioSesion" method="post">
+            <div class="mb-3">
+                <label asp-for="Correo" class="form-label">Correo Electrónico</label>
+                <input asp-for="Correo" class="form-control" placeholder="Ingresa tu correo" required />
             </div>
+            <div class="mb-3">
+                <label asp-for="Contraseña" class="form-label">Contraseña</label>
+                <input asp-for="Contraseña" type="password" class="form-control" placeholder="Ingresa tu contraseña" required />
+            </div>
+            <button type="submit" class="btn btn-primary w-100">Iniciar Sesión</button>
+        </form>
+        <div class="text-center mt-3">
+            <a asp-controller="Acceso" asp-action="RecuperarContrasena" class="text-decoration-none">¿Olvidaste tu contraseña?</a>
+        </div>
+        <div class="text-center mt-3">
+            <p>¿Aún no tienes una cuenta? <a asp-controller="Acceso" asp-action="RegistroUsuario">Registrarse</a></p>
         </div>
     </div>
-</section>
-
-
-
+</div>
 
 @section Scripts {
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
+        var mensajeError = null;
+        var mensajeExito = null;
+
         @if (TempData["MensajeInicioFallido"] != null)
         {
-            <text>
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error de inicio de sesión',
-                        text: '@TempData["MensajeInicioFallido"]',
-                        confirmButtonColor: '#d33',
-                        confirmButtonText: 'Intentar de nuevo'
-                    });
-            </text>
+                <text>
+                    mensajeError = @Html.Raw(Json.Serialize(TempData["MensajeInicioFallido"]));
+                </text>
+        }
+
+        @if (TempData["MensajeExito"] != null)
+        {
+                <text>
+                    mensajeExito = @Html.Raw(Json.Serialize(TempData["MensajeExito"]));
+                </text>
+        }
+
+        if (mensajeError) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error de inicio de sesión',
+                text: mensajeError,
+                confirmButtonColor: '#d33',
+                confirmButtonText: 'Intentar de nuevo'
+            });
+        }
+
+        if (mensajeExito) {
+            Swal.fire({
+                icon: 'success',
+                title: '¡Éxito!',
+                text: mensajeExito,
+                confirmButtonColor: '#3085d6',
+                confirmButtonText: 'Aceptar'
+            });
         }
     </script>
 }

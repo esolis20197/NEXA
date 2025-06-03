@@ -1,8 +1,9 @@
-﻿using NEXA.Models;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using NEXA.Models;
 using NEXA.Services;
+using System.Security.Cryptography;
 
 namespace NEXA.Controllers
 {
@@ -121,7 +122,164 @@ namespace NEXA.Controllers
             return RedirectToAction("InicioSesion", "Acceso");
         }
 
+        private string GenerarToken()
+        {
+            const string caracteres = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+            var tokenChars = new char[6];
+            using (var rng = RandomNumberGenerator.Create())
+            {
+                byte[] datos = new byte[6];
+                rng.GetBytes(datos);
+                for (int i = 0; i < tokenChars.Length; i++)
+                {
+                    tokenChars[i] = caracteres[datos[i] % caracteres.Length];
+                }
+            }
+            return new string(tokenChars);
+        }
 
+        [AllowAnonymous]
+        [HttpGet]
+        public IActionResult RecuperarContrasena()
+        {
+            return View();
+        }
+
+        [AllowAnonymous]
+        [HttpPost]
+        public async Task<IActionResult> RecuperarContrasena(string correo)
+        {
+            var usuario = await _context.Usuario.FirstOrDefaultAsync(u => u.Correo == correo);
+
+            if (usuario == null)
+            {
+                TempData["MensajeRecuperacion"] = "No se encontró ningún usuario con ese correo.";
+                return View();
+            }
+
+            // Eliminamos todos los tokens existentes para este usuario
+            var tokensExistentes = _context.PasswordResetTokens.Where(t => t.UsuarioId == usuario.Id);
+            _context.PasswordResetTokens.RemoveRange(tokensExistentes);
+            await _context.SaveChangesAsync();
+
+            string token = GenerarToken().ToUpper();
+
+            // Crear el registro del token
+            var tokenRegistro = new PasswordResetToken
+            {
+                Token = token,
+                Expiration = DateTime.UtcNow.AddMinutes(15),
+                UsuarioId = usuario.Id
+            };
+
+            // Guardar token en la base
+            _context.PasswordResetTokens.Add(tokenRegistro);
+            await _context.SaveChangesAsync();
+
+            var cuerpo = $@"
+            <div style='font-family: Arial, sans-serif; color: #333;'>
+                <h2 style='color: #2E86C1;'>Hola {usuario.NombreCompleto},</h2>
+                <p>Has solicitado restablecer tu contraseña.</p>
+                <p>Tu código de verificación es:</p>
+                <div style='
+                    background-color: #f0f4f8;
+                    border: 2px solid #2E86C1;
+                    border-radius: 8px;
+                    padding: 20px;
+                    font-size: 28px;
+                    font-weight: bold;
+                    text-align: center;
+                    letter-spacing: 6px;
+                    width: fit-content;
+                    margin: 20px auto;
+                    color: #2E86C1;
+                    '>{token}</div>
+                <p>Ingresa este código en la página para continuar con el restablecimiento de tu contraseña.</p>
+                <p style='font-size: 0.9em; color: #555;'>Este código expirará en 15 minutos.</p>
+                <hr style='border: none; border-top: 1px solid #ddd; margin: 30px 0;' />
+                <p style='font-size: 0.8em; color: #999;'>Si no solicitaste este cambio, puedes ignorar este correo.</p>
+            </div>";
+
+            var emailService = HttpContext.RequestServices.GetRequiredService<EmailService>();
+            await emailService.EnviarCorreoAsync(usuario.Correo, "Recuperación de contraseña", cuerpo);
+
+            TempData["CorreoRecuperacion"] = correo;
+            return RedirectToAction("ValidarToken");
+        }
+
+        [AllowAnonymous]
+        [HttpGet]
+        public IActionResult ValidarToken()
+        {
+            return View();
+        }
+
+        [AllowAnonymous]
+        [HttpPost]
+        public async Task<IActionResult> ValidarToken(string token)
+        {
+            if (string.IsNullOrEmpty(token))
+            {
+                ModelState.AddModelError("", "Debes ingresar el código.");
+                return View();
+            }
+
+            var tokenRegistro = await _context.PasswordResetTokens
+            .Include(t => t.Usuario)
+            .FirstOrDefaultAsync(t => t.Token.ToUpper() == token.ToUpper() && t.Expiration > DateTime.UtcNow);
+
+
+            if (tokenRegistro == null)
+            {
+                ModelState.AddModelError("", "Código inválido o expirado.");
+                return View();
+            }
+
+            TempData["TokenValido"] = token;
+            return RedirectToAction("RestablecerContrasena", new { token });
+        }
+
+
+        [AllowAnonymous]
+        [HttpGet]
+        public IActionResult RestablecerContrasena(string token)
+        {
+
+            ViewData["Token"] = token;
+            return View();
+        }
+
+        [AllowAnonymous]
+        [HttpPost]
+        public async Task<IActionResult> RestablecerContrasena(string token, string nuevaContrasena, string confirmarContrasena)
+        {
+            if (nuevaContrasena != confirmarContrasena)
+            {
+                ModelState.AddModelError("", "Las contraseñas no coinciden.");
+                ViewData["Token"] = token;
+                return View();
+            }
+
+            var tokenRegistro = await _context.PasswordResetTokens
+                .Include(t => t.Usuario)
+                .FirstOrDefaultAsync(t => t.Token == token && t.Expiration > DateTime.UtcNow);
+
+            if (tokenRegistro == null)
+            {
+                ModelState.AddModelError("", "Código inválido o expirado.");
+                return View();
+            }
+
+            var usuario = tokenRegistro.Usuario;
+
+            usuario.Contraseña = nuevaContrasena;
+
+            _context.PasswordResetTokens.Remove(tokenRegistro);
+            await _context.SaveChangesAsync();
+
+            TempData["MensajeExito"] = "Contraseña restablecida correctamente.";
+            return RedirectToAction("InicioSesion");
+        }
 
     }
 }
