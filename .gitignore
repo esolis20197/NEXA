@@ -1,0 +1,32 @@
+# Carpeta de configuración de Visual Studio
+.vs/
+
+# Archivos de usuario y del entorno local
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Carpetas generadas al compilar
+bin/
+obj/
+
+# Paquetes de NuGet
+packages/
+*.nupkg
+*.snupkg
+
+# Archivos de publicación
+*.publishsettings
+*.pubxml
+*.pfx
+
+# Archivos temporales y del sistema operativo
+*.log
+*.tmp
+Thumbs.db
+Desktop.ini
+
+# Configuración de Rider/ReSharper
+.idea/
+*.DotSettings.user
