@@ -5,61 +5,44 @@
     bool esAdministrador = usuarioRol == "Administrador";
 }
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Detalles del Producto";
 }
 
-<h1>Details</h1>
+<div class="container py-4">
+    <h1 class="mb-4">@ViewData["Title"]</h1>
 
-<div>
-    <h4>Inventario</h4>
-    <hr />
-    <dl class="row">
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.FotoUrl)
-        </dt>
-        <dd class="col-sm-10">
-            @if (!string.IsNullOrEmpty(Model.FotoUrl))
-            {
-                <img src="@Model.FotoUrl" alt="Imagen de @Model.Nombre" style="max-width: 300px; max-height: 300px;" />
-            }
-            else
-            {
-                <span>No disponible</span>
-            }
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Nombre)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Nombre)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Descripcion)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Descripcion)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Precio)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Precio)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Stock)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Stock)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.tipo)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.tipo)
-        </dd>
-    </dl>
-</div>
-<div>
-    
-    <a asp-action="IndexCliente">Back to List</a>
+    <div class="card shadow-sm">
+        <div class="row g-0">
+            <div class="col-md-4 d-flex align-items-center justify-content-center p-3">
+                @if (!string.IsNullOrEmpty(Model.FotoUrl))
+                {
+                    <img src="@Model.FotoUrl" alt="Imagen de @Model.Nombre" class="img-fluid rounded" style="max-height: 300px; object-fit: contain;" />
+                }
+                else
+                {
+                    <div class="text-muted fst-italic">Imagen no disponible</div>
+                }
+            </div>
+            <div class="col-md-8">
+                <div class="card-body">
+                    <h4 class="card-title mb-3">@Model.Nombre</h4>
+                    <dl class="row">
+                        <dt class="col-sm-4 fw-semibold">Descripción</dt>
+                        <dd class="col-sm-8">@Model.Descripcion</dd>
+
+                        <dt class="col-sm-4 fw-semibold">Precio</dt>
+                        <dd class="col-sm-8">$@Model.Precio.ToString("F2")</dd>
+
+                        <dt class="col-sm-4 fw-semibold">Stock</dt>
+                        <dd class="col-sm-8">@Model.Stock</dd>
+
+                        <dt class="col-sm-4 fw-semibold">Tipo</dt>
+                        <dd class="col-sm-8">@Model.tipo</dd>
+                    </dl>
+
+                    <a asp-action="IndexCliente" class="btn btn-primary mt-3">Volver al listado</a>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
