@@ -4,6 +4,7 @@ html {
     font-family: 'Roboto', sans-serif;
     position: relative;
     min-height: 100%;
+    scroll-behavior: smooth;
 }
 
 @media (min-width: 768px) {
@@ -20,6 +21,12 @@ body {
 }
 
 /* Tipografía personalizada por jerarquía */
+.title {
+    font-size: 65px; /* Roboto Bold */
+    color: #0c3b5e;
+    margin-top: 45px
+}
+
 h1, .title-primary {
     font-weight: 700; /* Roboto Bold */
     color: #0c3b5e;
@@ -56,16 +63,71 @@ a, .accent, .link {
 
 /* Botones principales */
 .btn-primary {
-    background-color: #2886de;
-    border-color: #2886de;
+    background-color: #0f548c;
+    border-color: #0f548c;
     color: #ffffff;
 }
 
     .btn-primary:hover {
-        background-color: #0f548c;
-        border-color: #0f548c;
+        background-color: #2886de;
+        border-color: #2886de;
+        color: #ebf3fc;
     }
 
     .btn-primary:focus {
         box-shadow: 0 0 0 0.2rem rgba(40, 134, 222, 0.5);
     }
+
+.btn-secondary {
+    background-color: #ebf3fc;
+    border-color: #ebf3fc;
+    color: #0f548c;
+}
+
+    .btn-secondary:hover {
+        background-color: #2886de;
+        border-color: #2886de;
+    }
+
+    .btn-secondary:focus {
+        box-shadow: 0 0 0 0.2rem rgba(40, 134, 222, 0.5);
+    }
+
+.navbar-custom {
+    background-color: #0c3b5e !important;
+    color: white;
+}
+
+    .navbar-custom .navbar-item,
+    .navbar-custom .nav-link {
+        color: white;
+        font-size: 20px
+    }
+
+.navbar-toggler {
+    border-color: white;
+}
+
+.navbar-toggler-icon {
+    background-image: url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='rgba%28255, 255, 255, 1%29' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E");
+}
+
+
+.altura {
+    height:350px;
+    border-bottom: 4px solid #0c3b5e;
+}
+
+@media (max-width: 768px) {
+    h1, h2 {
+        font-size: 1.8rem;
+    }
+
+    p {
+        font-size: 1rem;
+    }
+}
+
+
+
+

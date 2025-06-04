@@ -1,8 +1,68 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Inicio";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Bienvenido</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="container py-5">
+    <div class="text-center mb-5 altura">
+        <h1 class="title">NEXA Soluciones críticas de datos</h1>
+        <h2 class="mt-4">
+            Confianza, tecnología y servicio:<br />
+            la fórmula de NEXA para proteger tus operaciones
+        </h2>
+    </div>
+
+    <!-- Sección Nosotros -->
+    <section id="nosotros" class="py-5">
+        <div class="row align-items-center mb-5">
+            <div class="col-lg-6 mb-4 mb-lg-0">
+                <img src="~/imagenes/ejemplo2.jpg" class="img-fluid rounded shadow" alt="Ejemplo">
+            </div>
+            <div class="col-lg-6">
+                <p>
+                    En NEXA, somos aliados estratégicos en la continuidad operativa de los clientes que dependen de una infraestructura crítica y sólida, adaptable y confiable.
+                </p>
+                <p>
+                    Ofrecemos soluciones tecnológicas personalizadas que integran respaldo energético, climatización de precisión, cableado estructurado, videovigilancia, mantenimiento preventivo y predictivo, y servicios de infraestructura integral con una atención cercana, ágil y especializada.
+                </p>
+            </div>
+        </div>
+
+        <div class="row align-items-center">
+            <div class="col-lg-6 order-lg-2 mb-4 mb-lg-0">
+                <img src="~/imagenes/ejemplo1.jpg" class="img-fluid rounded shadow" alt="Ejemplo 2">
+            </div>
+            <div class="col-lg-6 order-lg-1">
+                <p>
+                    Nuestro propósito es impulsar el éxito continuo de nuestros clientes a través de soluciones tecnológicas personalizadas, sostenibles y confiables, diseñadas para asegurar su operación ininterrumpida y alinearse con sus objetivos críticos.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sección Contacto -->
+    <section id="contacto" class="py-5 bg-light rounded">
+        <h2 class="text-center mb-4 text-dark">Contacto</h2>
+        <p class="text-center mb-4">
+            Puedes comunicarte con nosotros por correo a <a href="mailto:info@ejemplo.com">info@ejemplo.com</a> o llamarnos al +506 8894-6445.
+        </p>
+        <form class="mx-auto" style="max-width: 600px;">
+            <div class="form-floating mb-3">
+                <input type="text" class="form-control" id="nombre" placeholder="Tu nombre">
+                <label for="nombre">Nombre</label>
+            </div>
+            <div class="form-floating mb-3">
+                <input type="email" class="form-control" id="correo" placeholder="Tu correo">
+                <label for="correo">Correo</label>
+            </div>
+            <div class="form-floating mb-3">
+                <textarea class="form-control" id="mensaje" placeholder="Tu mensaje" style="height: 150px;"></textarea>
+                <label for="mensaje">Mensaje</label>
+            </div>
+            <div class="text-center">
+                <button type="submit" class="btn btn-primary px-4">Enviar</button>
+            </div>
+        </form>
+    </section>    
+
 </div>
