@@ -5,10 +5,8 @@
 }
 
 <div class="container py-4">
-    <h1 class="mb-4">@ViewData["Title"]</h1>
-
-    <div class="card shadow-sm p-4" style="max-width: 500px;">
-        <h4 class="mb-3">Usuario</h4>
+    <div class="card shadow-sm p-4">
+        <h4 class="text-center mb-4">@ViewData["Title"]</h4>
         <hr />
         <form asp-action="Create" method="post">
             <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>

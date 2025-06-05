@@ -9,9 +9,9 @@
 }
 
 <div class="container py-4">
-    <h1 class="mb-4">@ViewData["Title"]</h1>
-
-    <div class="card shadow-sm">
+    <div class="card shadow-sm p-4">
+        <h4 class="text-center mb-4">@ViewData["Title"]</h4>
+        <hr />
         <div class="row g-0">
             <div class="col-md-4 d-flex align-items-center justify-content-center p-3">
                 @if (!string.IsNullOrEmpty(Model.FotoUrl))
@@ -39,8 +39,17 @@
                         <dt class="col-sm-4 fw-semibold">Tipo</dt>
                         <dd class="col-sm-8">@Model.tipo</dd>
                     </dl>
-
-                    <a asp-action="IndexCliente" class="btn btn-primary mt-3">Volver al listado</a>
+                    <div>
+                        @if (usuarioRol == "Administrador")
+                        {
+                            <a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-primary me-2">Editar</a>
+                            <a asp-action="Index" class="btn btn-secondary">Volver al listado</a>
+                        }
+                        else
+                        {
+                            <a asp-action="IndexCliente" class="btn btn-secondary">Volver al listado</a>
+                        }
+                    </div>
                 </div>
             </div>
         </div>

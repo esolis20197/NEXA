@@ -121,24 +121,6 @@ namespace NEXA.Controllers
             return View(inventario);
         }
 
-        // GET: Inventarios/Delete/5
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var inventario = await _context.Inventario
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (inventario == null)
-            {
-                return NotFound();
-            }
-
-            return View(inventario);
-        }
-
         // POST: Inventarios/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]

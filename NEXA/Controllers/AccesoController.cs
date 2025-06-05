@@ -90,7 +90,7 @@ namespace NEXA.Controllers
                 _context.SaveChanges();
 
                 TempData["MensajeRegistroCorrecto"] = "Usuario registrado correctamente, ahora puedes iniciar sesion.";
-                return RedirectToAction("RegistroUsuario");
+                return RedirectToAction("InicioSesion");
             }
 
             return View(modelo);

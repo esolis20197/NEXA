@@ -151,25 +151,7 @@ namespace NEXA.Controllers
             }
 
             return View(model);
-        }
-
-        // GET: Usuarios/Delete/5
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var usuario = await _context.Usuario
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (usuario == null)
-            {
-                return NotFound();
-            }
-
-            return View(usuario);
-        }
+        }       
 
         // POST: Usuarios/Delete/5
         [HttpPost, ActionName("Delete")]

@@ -5,10 +5,9 @@
 }
 
 <div class="container py-4">
-    <h1 class="mb-4">@ViewData["Title"]</h1>
-
     <div class="card shadow-sm p-4">
-        <h4 class="mb-3">Editar Usuario</h4>
+        <h4 class="text-center mb-4">@ViewData["Title"]</h4>
+        <hr />
         <form asp-action="Edit" novalidate>
             <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
             <input type="hidden" asp-for="Id" />
@@ -43,11 +42,7 @@
                 <span asp-validation-for="Telefono" class="text-danger"></span>
             </div>
 
-            <div class="mb-3">
-                <label asp-for="Contraseña" class="form-label"></label>
-                <input asp-for="Contraseña" class="form-control" type="password" placeholder="Contraseña" />
-                <span asp-validation-for="Contraseña" class="text-danger"></span>
-            </div>
+            <input type="hidden" asp-for="Contraseña" />
 
             <div class="mb-3">
                 <label asp-for="Rol" class="form-label"></label>

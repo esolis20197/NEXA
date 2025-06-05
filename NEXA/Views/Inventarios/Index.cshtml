@@ -50,12 +50,40 @@
                     <td>
                         <a asp-action="Edit" asp-route-id="@item.Id" title="Editar"><i class="bi bi-pencil m-1"></i></a>
                         <a asp-action="Details" asp-route-id="@item.Id" title="Detalles"><i class="bi bi-eye m-1"></i></a>
-                        <a asp-action="Delete" asp-route-id="@item.Id" title="Eliminar"><i class="bi bi-trash m-1"></i></a>
+                        <a href="#" class="text-danger eliminarProducto"
+                           data-id="@item.Id"
+                           data-nombre="@item.Nombre"
+                           data-bs-toggle="modal"
+                           data-bs-target="#confirmarEliminarModal"
+                           title="Eliminar">
+                            <i class="bi bi-trash m-1"></i>
+                        </a>
                     </td>
                 </tr>
             }
         </tbody>
     </table>
+</div>
+
+<!-- Modal de confirmación -->
+<div class="modal fade" id="confirmarEliminarModal" tabindex="-1" aria-labelledby="confirmarEliminarModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form id="formEliminar" method="post">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="confirmarEliminarModalLabel">Confirmar eliminación</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                    ¿Está seguro de que desea eliminar el producto <strong id="nombreProducto"></strong>?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-danger">Eliminar</button>
+                </div>
+            </form>
+        </div>
+    </div>
 </div>
 
 @section Scripts {
@@ -68,6 +96,7 @@
     <script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js"></script>
     <script src="https://cdn.datatables.net/responsive/2.4.1/js/dataTables.responsive.min.js"></script>
     <script src="https://cdn.datatables.net/responsive/2.4.1/js/responsive.bootstrap5.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
         $(document).ready(function () {
@@ -85,6 +114,15 @@
 
             $('#searchInput').on('keyup', function () {
                 table.search(this.value).draw();
+            });
+
+            let productoId = 0;
+
+            $('.eliminarProducto').on('click', function () {
+                productoId = $(this).data('id');
+                const nombre = $(this).data('nombre');
+                $('#nombreProducto').text(nombre);
+                $('#formEliminar').attr('action', '/Inventarios/Delete/' + productoId);
             });
         });
     </script>

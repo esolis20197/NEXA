@@ -3,19 +3,9 @@
 
 @{
     ViewData["Title"] = "Inventario";
-    var usuarioRol = Context.Session.GetString("UsuarioRol");
-    var sesionActiva = !string.IsNullOrEmpty(usuarioRol);
 }
 
-<h1>Inventario de Productos</h1>
-
-<!-- BOTÓN CREAR -->
-@if (usuarioRol == "Administrador")
-{
-    <a asp-action="Create" class="btn btn-primary mb-4">
-        <i class="bi bi-plus-circle me-1"></i> Crear nuevo producto
-    </a>
-}
+<h1>Productos</h1>
 
 <!-- BUSQUEDA -->
 <div class="mb-4">
@@ -43,27 +33,18 @@
                         <p class="card-text text-muted fw-semibold mb-2">@item.tipo</p>
                         <p class="card-text text-muted mb-2">@item.Descripcion</p>
                         <p class="card-text text-muted mb-2">₡@item.Precio</p>
-                        <p class="card-text fw-bold @(item.Stock < 10 ? "text-danger" : "text-success")">
+                        @*@<p class="card-text fw-bold @(item.Stock < 10 ? "text-danger" : "text-success")">
                             Stock: @item.Stock
                             @if (item.Stock < 10)
                             {
                                 <i class="bi bi-exclamation-triangle-fill ms-1"></i>
                             }
-                        </p>
+                        </p>*@
 
                         <div class="mt-auto d-flex justify-content-between">
-                            <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-outline-secondary btn-sm rounded-pill">
+                            <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-secondary btn-sm rounded-pill">
                                 <i class="bi bi-eye"></i> Ver
-                            </a>                           
-                            @if (usuarioRol == "Administrador")
-                            {
-                                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-outline-warning btn-sm rounded-pill">
-                                    <i class="bi bi-pencil"></i> Editar
-                                </a>
-                                <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-outline-danger btn-sm rounded-pill">
-                                    <i class="bi bi-trash"></i> Eliminar
-                                </a>
-                            }
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -75,6 +56,7 @@
 <!-- SCRIPTS -->
 @section Scripts {
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" />
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const searchInput = document.getElementById('searchInput');

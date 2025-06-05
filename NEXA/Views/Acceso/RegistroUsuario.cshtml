@@ -74,19 +74,6 @@
                 }
             });
 
-            @if (TempData["MensajeRegistroCorrecto"] != null)
-            {
-                    <text>
-                        Swal.fire({
-                            icon: 'success',
-                            title: '¡Registro exitoso!',
-                            text: '@TempData["MensajeRegistroCorrecto"]',
-                            confirmButtonColor: '#3085d6',
-                            confirmButtonText: 'Aceptar'
-                        });
-                    </text>
-            }
-
             @if (TempData["MensajeRegistroIncorrecto"] != null)
             {
                     <text>

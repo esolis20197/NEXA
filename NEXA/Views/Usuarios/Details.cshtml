@@ -5,10 +5,8 @@
 }
 
 <div class="container py-4">
-    <h1>@ViewData["Title"]</h1>
-
-    <div class="card p-4 shadow-sm" style="max-width: 600px;">
-        <h4 class="mb-3">Información del Usuario</h4>
+    <div class="card shadow-sm p-4">
+        <h4 class="text-center mb-4">@ViewData["Title"]</h4>
         <hr />
         <dl class="row">
             <dt class="col-sm-3">@Html.DisplayNameFor(model => model.NombreUsuario)</dt>
@@ -25,9 +23,6 @@
 
             <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Telefono)</dt>
             <dd class="col-sm-9">@Html.DisplayFor(model => model.Telefono)</dd>
-
-            <dt class="col-sm-3">Contraseña</dt>
-            <dd class="col-sm-9">******</dd> <!-- No mostrar contraseña real -->
 
             <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Rol)</dt>
             <dd class="col-sm-9">@Html.DisplayFor(model => model.Rol)</dd>
