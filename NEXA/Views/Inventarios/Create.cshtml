@@ -42,10 +42,14 @@
                     <span asp-validation-for="Stock" class="text-danger"></span>
                 </div>
             </div>
-
+           
             <div class="mb-3">
                 <label asp-for="tipo" class="form-label"></label>
-                <input asp-for="tipo" class="form-control" placeholder="Tipo de producto" />
+                <select asp-for="tipo" class="form-select">
+                    <option value="">-- Selecciona un tipo --</option>
+                    <option value="Material">Material</option>
+                    <option value="Producto">Producto</option>
+                </select>
                 <span asp-validation-for="tipo" class="text-danger"></span>
             </div>
 
