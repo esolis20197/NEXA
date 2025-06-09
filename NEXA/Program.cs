@@ -13,7 +13,7 @@ builder.Services.AddDbContext<NEXAContext>(options =>
 builder.Services.AddDistributedMemoryCache(); // Necesario para almacenar sesiones en memoria
 builder.Services.AddSession(options =>
 {
-    options.IdleTimeout = TimeSpan.FromMinutes(1); // Tiempo de expiración de la sesión
+    options.IdleTimeout = TimeSpan.FromMinutes(10); // Tiempo de expiración de la sesión
     options.Cookie.HttpOnly = true; // Asegura que la cookie de sesión no sea accesible por scripts
     options.Cookie.IsEssential = true; // Necesario para que funcione en GDPR-compliance
 });

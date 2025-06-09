@@ -15,5 +15,7 @@ namespace NEXA.Models
         public required string Contraseña { get; set; }
         public required string Rol { get; set; }  // Administrador, Usuario
 
+        public ICollection<Proyecto>? Proyectos { get; set; }
+
     }
 }
