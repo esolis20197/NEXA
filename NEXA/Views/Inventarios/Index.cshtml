@@ -38,7 +38,7 @@
                     </td>
                     <td>@item.Nombre</td>
                     <td>@item.Descripcion</td>
-                    <td>@item.Precio.ToString("C")</td>
+                    <td>₡@item.Precio.ToString("N2")</td>
                     <td>
                         @item.Stock
                         @if (item.Stock < 10)

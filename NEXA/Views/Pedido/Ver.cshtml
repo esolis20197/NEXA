@@ -1,0 +1,57 @@
+﻿@model NEXA.Models.Pedido
+
+@{
+    ViewData["Title"] = "Detalle del Pedido";
+    var total = Model.Detalles.Sum(d => d.Cantidad * d.PrecioUnitario);
+}
+
+<div class="container py-4">
+    <h3 class="mb-4">@ViewData["Title"]</h3>
+
+    <div class="card mb-4">
+        <div class="card-body">
+            <h5 class="card-title">Información del Usuario</h5>
+            <p><strong>Nombre:</strong> @Model.Usuario.NombreCompleto</p>
+            <p><strong>Correo:</strong> @Model.Usuario.Correo</p>
+            <p><strong>Teléfono:</strong> @Model.Usuario.Telefono</p>
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-body">
+            <h5 class="card-title">Detalles del Pedido</h5>
+            <p><strong>Fecha:</strong> @Model.FechaPedido.ToString("dd/MM/yyyy HH:mm")</p>
+            <p><strong>Estado:</strong> @Model.Estado</p>
+
+            <table class="table table-bordered mt-3">
+                <thead>
+                    <tr>
+                        <th>Producto</th>
+                        <th>Precio Unitario</th>
+                        <th>Cantidad</th>
+                        <th>Subtotal</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var detalle in Model.Detalles)
+                    {
+                        <tr>
+                            <td>@detalle.Inventario.Nombre</td>
+                            <td>₡@detalle.PrecioUnitario.ToString("N2")</td>
+                            <td>@detalle.Cantidad</td>
+                            <td>₡@(((decimal)detalle.Cantidad * detalle.PrecioUnitario).ToString("N2"))</td>
+                        </tr>
+                    }
+                </tbody>
+                <tfoot>
+                    <tr class="table-secondary">
+                        <td colspan="3" class="text-end fw-bold">Total:</td>
+                        <td class="fw-bold">₡@total.ToString("N2")</td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+
+    <a asp-action="Historial" class="btn btn-secondary">Volver al Historial</a>
+</div>

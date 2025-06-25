@@ -1,0 +1,90 @@
+﻿@model List<NEXA.Models.Pedido>
+
+@{
+    ViewData["Title"] = "Historial de Pedidos";
+    var estado = ViewBag.EstadoSeleccionado as string ?? "Pendiente";
+}
+
+<div class="container py-4">
+    <h3 class="mb-4">@ViewData["Title"]</h3>
+
+    <div class="mb-3">
+        <a asp-action="Historial" asp-route-estado="Pendiente" class="btn btn-outline-primary @(estado == "Pendiente" ? "active" : "")">Pendientes</a>
+        <a asp-action="Historial" asp-route-estado="Completado" class="btn btn-outline-success @(estado == "Completado" ? "active" : "")">Completados</a>
+        <a asp-action="Historial" asp-route-estado="Rechazado" class="btn btn-outline-danger @(estado == "Rechazado" ? "active" : "")">Rechazados</a>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info">No hay pedidos registrados en esta categoría.</div>
+    }
+    else
+    {
+        <table class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>Fecha</th>
+                    <th>Usuario</th>
+                    <th>Estado</th>
+                    <th>Total</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var pedido in Model)
+                {
+                    var total = pedido.Detalles.Sum(d => d.Cantidad * d.PrecioUnitario);
+                    <tr>
+                        <td>@pedido.FechaPedido.ToString("dd/MM/yyyy HH:mm")</td>
+                        <td>@pedido.Usuario.NombreUsuario</td>
+                        <td>@pedido.Estado</td>
+                        <td>₡@total.ToString("N2")</td>
+                        <td>
+                            <a asp-action="Ver" asp-route-id="@pedido.Id" class="btn btn-sm btn-primary me-2">Ver</a>
+                            @if (estado == "Pendiente")
+                            {
+                                <button type="button" class="btn btn-sm btn-success me-2" onclick="confirmarAccion(@pedido.Id, 'Completar')">Completar</button>
+                                <button type="button" class="btn btn-sm btn-danger" onclick="confirmarAccion(@pedido.Id, 'Rechazar')">Rechazar</button>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        function confirmarAccion(id, accion) {
+            const textoAccion = accion === 'Completar'
+                ? 'marcar este pedido como completado'
+                : 'rechazar este pedido y devolver productos al stock';
+
+            Swal.fire({
+                title: '¿Estás seguro?',
+                text: `Esta acción va a ${textoAccion}.`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Sí, confirmar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const form = document.createElement('form');
+                    form.method = 'POST';
+                    form.action = `/Pedido/${accion}`;
+
+                    const input = document.createElement('input');
+                    input.type = 'hidden';
+                    input.name = 'id';
+                    input.value = id;
+                    form.appendChild(input);
+
+                    document.body.appendChild(form);
+                    form.submit();
+                }
+            });
+        }
+    </script>
+}

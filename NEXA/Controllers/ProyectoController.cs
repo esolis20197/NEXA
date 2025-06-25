@@ -11,11 +11,11 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace NEXA.Controllers
 {
-    public class ProyectoController : Controller
+    public class ProyectoController : BaseController
     {
         private readonly NEXAContext _context;
 
-        public ProyectoController(NEXAContext context)
+        public ProyectoController(NEXAContext context) : base(context)
         {
             _context = context;
         }

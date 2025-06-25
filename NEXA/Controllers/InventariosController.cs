@@ -11,11 +11,11 @@ using NEXA.Filters;
 namespace NEXA.Controllers
 {
     [FiltroSeguridad]
-    public class InventariosController : Controller
+    public class InventariosController : BaseController
     {
         private readonly NEXAContext _context;
 
-        public InventariosController(NEXAContext context)
+        public InventariosController(NEXAContext context) : base(context)
         {
             _context = context;
         }

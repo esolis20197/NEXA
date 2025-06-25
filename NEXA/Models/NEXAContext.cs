@@ -12,6 +12,10 @@ namespace NEXA.Models
         public DbSet<Inventario> Inventario { get; set; }
         public DbSet<PasswordResetToken> PasswordResetTokens { get; set; }
 
+        public DbSet<Carrito> Carritos { get; set; }
+        public DbSet<CarritoDetalle> CarritoDetalles { get; set; }
+        public DbSet<Pedido> Pedidos { get; set; }
+        public DbSet<PedidoDetalle> PedidoDetalles { get; set; }
 
         public DbSet<Proyecto> Proyecto { get; set; }
 

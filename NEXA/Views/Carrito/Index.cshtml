@@ -1,0 +1,104 @@
+﻿@model NEXA.Models.Carrito
+@using System.Globalization
+
+@{
+    ViewData["Title"] = "Mi Carrito de Compras";
+    var total = Model?.Detalles?.Sum(d => d.Cantidad * d.PrecioUnitario) ?? 0;
+}
+
+<div class="container py-4">
+    <div class="card shadow-sm p-4">
+        <h3 class="mb-4">@ViewData["Title"]</h3>
+        <hr />
+
+        @if (Model == null || !Model.Detalles.Any())
+        {
+            <div class="alert alert-info">Tu carrito está vacío.</div>
+            <a asp-controller="Inventarios" asp-action="IndexCliente" class="btn btn-primary">Seguir comprando</a>
+        }
+        else
+        {
+            <table class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th>Producto</th>
+                        <th>Precio Unitario</th>
+                        <th>Cantidad</th>
+                        <th>Subtotal</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Detalles)
+                    {
+                        <tr>
+                            <td>@item.Inventario.Nombre</td>
+                            <td>₡@item.PrecioUnitario.ToString("N2")</td>
+                            <td>
+                                <form asp-action="ActualizarCantidad" method="post" class="d-flex">
+                                    <input type="hidden" name="id" value="@item.Id" />
+                                    <input type="number" name="cantidad" min="1" max="@item.Inventario.Stock" value="@item.Cantidad" class="form-control form-control-sm me-2" style="width: 80px;" />
+                                    <button type="submit" class="btn btn-sm btn-outline-primary">Actualizar</button>
+                                </form>
+                            </td>
+                            <td>₡@(((decimal)item.Cantidad * item.PrecioUnitario).ToString("N2"))</td>
+                            <td>
+                                <form method="post" asp-action="Eliminar" onsubmit="return confirmarEliminacion(this)">
+                                    <input type="hidden" name="id" value="@item.Id" />
+                                    <button type="submit" class="btn btn-sm btn-outline-danger">Eliminar</button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+                <tfoot>
+                    <tr class="table-secondary">
+                        <td colspan="3" class="text-end fw-bold">Total:</td>
+                        <td class="fw-bold">₡@total.ToString("N2")</td>
+                        <td></td>
+                    </tr>
+                </tfoot>
+            </table>
+
+            <form asp-controller="Pedido" asp-action="Crear" method="post" onsubmit="return confirmarPedido(this)">
+                <button type="submit" class="btn btn-success">Realizar Pedido</button>
+                <a asp-controller="Inventarios" asp-action="IndexCliente" class="btn btn-secondary ms-2">Seguir comprando</a>
+            </form>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        function confirmarEliminacion(formulario) {
+            event.preventDefault();
+            Swal.fire({
+                title: '¿Eliminar producto?',
+                text: '¿Deseás eliminar este producto del carrito?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Sí, eliminar',
+                cancelButtonText: 'Cancelar'
+            }).then(result => {
+                if (result.isConfirmed) formulario.submit();
+            });
+            return false;
+        }
+
+        function confirmarPedido(formulario) {
+            event.preventDefault();
+            Swal.fire({
+                title: '¿Confirmar pedido?',
+                text: '¿Deseás realizar este pedido con los productos actuales?',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: 'Sí, realizar pedido',
+                cancelButtonText: 'Cancelar'
+            }).then(result => {
+                if (result.isConfirmed) formulario.submit();
+            });
+            return false;
+        }
+    </script>
+}

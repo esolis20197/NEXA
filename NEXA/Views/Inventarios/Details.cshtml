@@ -31,7 +31,7 @@
                         <dd class="col-sm-8">@Model.Descripcion</dd>
 
                         <dt class="col-sm-4 fw-semibold">Precio</dt>
-                        <dd class="col-sm-8">$@Model.Precio.ToString("F2")</dd>
+                        <dd class="col-sm-8">₡@Model.Precio.ToString("N2")</dd>
 
                         <dt class="col-sm-4 fw-semibold">Stock</dt>
                         <dd class="col-sm-8">@Model.Stock</dd>
@@ -39,16 +39,28 @@
                         <dt class="col-sm-4 fw-semibold">Tipo</dt>
                         <dd class="col-sm-8">@Model.tipo</dd>
                     </dl>
-                    <div>
-                        @if (usuarioRol == "Administrador")
+
+                    <div class="mt-4">
+                        @if (esAdministrador)
                         {
                             <a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-primary me-2">Editar</a>
-                            <a asp-action="Index" class="btn btn-secondary">Volver al listado</a>
+                            <a asp-action="Index" class="btn btn-secondary me-2">Volver al listado</a>
                         }
                         else
                         {
-                            <a asp-action="IndexCliente" class="btn btn-secondary">Volver al listado</a>
+                            <a asp-action="IndexCliente" class="btn btn-secondary me-2">Volver al listado</a>
                         }
+
+                        <form asp-controller="Carrito" asp-action="Agregar" method="post" class="mt-3">
+                            <input type="hidden" name="inventarioId" value="@Model.Id" />
+                            <div class="row mb-3">
+                                <label for="cantidad" class="col-form-label col-sm-4">Cantidad</label>
+                                <div class="col-sm-4">
+                                    <input type="number" class="form-control" id="cantidad" name="cantidad" min="1" max="@Model.Stock" value="1" />
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-success">Agregar al carrito</button>
+                        </form>
                     </div>
                 </div>
             </div>

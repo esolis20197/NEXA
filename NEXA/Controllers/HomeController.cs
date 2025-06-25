@@ -4,11 +4,11 @@ using System.Diagnostics;
 
 namespace NEXA.Controllers
 {
-    public class HomeController : Controller
+    public class HomeController : BaseController
     {
         private readonly ILogger<HomeController> _logger;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(NEXAContext context, ILogger<HomeController> logger) : base(context)
         {
             _logger = logger;
         }

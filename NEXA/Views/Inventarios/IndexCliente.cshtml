@@ -32,7 +32,7 @@
                         <h5 class="card-title text-center text-dark fw-semibold">@item.Nombre</h5>
                         <p class="card-text text-muted fw-semibold mb-2">@item.tipo</p>
                         <p class="card-text text-muted mb-2">@item.Descripcion</p>
-                        <p class="card-text text-muted mb-2">₡@item.Precio</p>
+                        <p class="card-text text-muted mb-2">₡@item.Precio.ToString("N2")</p>
                         @*@<p class="card-text fw-bold @(item.Stock < 10 ? "text-danger" : "text-success")">
                             Stock: @item.Stock
                             @if (item.Stock < 10)
