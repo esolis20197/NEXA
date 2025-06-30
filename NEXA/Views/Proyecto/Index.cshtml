@@ -12,7 +12,7 @@
 
 <div class="mb-3">
     <label for="searchInput" class="form-label">Buscar</label>
-    <input type="text" id="searchInput" class="form-control" placeholder="Buscar por nombre, descripción, estado o usuario" />
+    <input type="text" id="searchInput" class="form-control" placeholder="Buscar por nombre, estado o usuario" />
 </div>
 
 <div class="table-responsive">
@@ -22,8 +22,6 @@
                 <th>Nombre</th>
                 <th>Fecha Inicio</th>
                 <th>Fecha Fin</th>
-                <th>Descripción</th>
-                <th>Fotos</th>
                 <th>Estado</th>
                 <th>Encargado</th>
                 <th>Acciones</th>
@@ -36,10 +34,6 @@
                     <td>@item.Nombre</td>
                     <td>@item.FechaInicio.ToShortDateString()</td>
                     <td>@item.FechaFin.ToShortDateString()</td>
-                    <td>@item.Descripcion</td>
-                    <td>
-                        <img src="@item.Fotos" alt="Imagen de @item.Nombre" style="max-width: 100px; max-height: 100px;" />
-                    </td>
                     <td>@item.estado</td>
                     <td>@item.Usuario?.NombreUsuario</td>
                     <td>
@@ -54,7 +48,6 @@
                             <i class="bi bi-trash m-1"></i>
                         </a>
 
-                        @* Botón "Finalizado" solo si no está finalizado *@
                         @if (item.estado != "Finalizado")
                         {
                             <button class="btn btn-success btn-sm btn-finalizar" data-id="@item.Id" title="Marcar como finalizado">
@@ -68,6 +61,7 @@
     </table>
 </div>
 
+<!-- Modal de Confirmación de Eliminación -->
 <div class="modal fade" id="confirmarEliminarModal" tabindex="-1" aria-labelledby="confirmarEliminarModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -124,11 +118,9 @@
                 proyectoId = $(this).data('id');
                 const nombre = $(this).data('nombre');
                 $('#nombreProyecto').text(nombre);
-
                 $('#formEliminar').attr('action', '/Proyecto/Delete/' + proyectoId);
             });
 
-            // Evento para botón "Finalizado"
             $('.btn-finalizar').on('click', function () {
                 const proyectoId = $(this).data('id');
                 const button = $(this);
@@ -147,9 +139,7 @@
                             type: 'POST',
                             success: function () {
                                 Swal.fire('¡Finalizado!', 'El proyecto ha sido marcado como finalizado.', 'success');
-                                // Cambiar texto del estado en la fila:
-                                button.closest('tr').find('td:nth-child(6)').text('Finalizado');
-                                // Ocultar el botón para evitar doble clic
+                                button.closest('tr').find('td:nth-child(4)').text('Finalizado');
                                 button.remove();
                             },
                             error: function () {

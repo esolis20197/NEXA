@@ -54,6 +54,7 @@ namespace NEXA.Controllers
         {
             if (ModelState.IsValid)
             {
+                proyecto.estado = "Pendiente";
                 _context.Add(proyecto);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));

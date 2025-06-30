@@ -31,7 +31,7 @@ namespace NEXA.Models
         [ForeignKey("Usuario")]
         public int UsuarioID { get; set; }
 
-        public string estado { get; set; }
+        public string estado { get; set; } = "Pendiente";
 
         public Usuario? Usuario { get; set; }
 

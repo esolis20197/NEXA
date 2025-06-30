@@ -51,14 +51,8 @@
                 <span asp-validation-for="UsuarioID" class="text-danger"></span>
             </div>
 
-            <div class="mb-3">
-                <label asp-for="estado" class="form-label"></label>
-                <select asp-for="estado" class="form-select">
-                    <option value="">-- Estado del proyecto --</option>
-                    <option value="Pendiente">Pendiente</option>                  
-                </select>
-                <span asp-validation-for="estado" class="text-danger"></span>
-            </div>
+            <!-- Campo oculto para estado -->
+            <input type="hidden" asp-for="estado" value="Pendiente" />
 
             <button type="submit" class="btn btn-primary">Crear</button>
             <a asp-action="Index" class="btn btn-secondary ms-2">Volver al listado</a>
