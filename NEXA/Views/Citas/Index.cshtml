@@ -1,0 +1,149 @@
+﻿@model IEnumerable<NEXA.Models.Citas>
+
+@{
+    ViewData["Title"] = "Citas";
+    var estadoSeleccionado = ViewBag.EstadoSeleccionado as string ?? "Pendiente";
+    var usuarioRol = ViewBag.UsuarioRol as string ?? "Sin rol";
+}
+
+<h1 class="mb-3">Citas</h1>
+
+<a asp-action="Create" class="btn btn-primary mb-3">
+    <i class="bi bi-plus-circle me-1"></i> Crear nueva cita
+</a>
+
+<div class="mb-3">
+    <a asp-action="Index" asp-route-estado="Pendiente" class="btn btn-outline-primary @(estadoSeleccionado == "Pendiente" ? "active" : "")">Pendientes</a>
+    <a asp-action="Index" asp-route-estado="Aprobado" class="btn btn-outline-success @(estadoSeleccionado == "Aprobado" ? "active" : "")">Aprobadas</a>
+    <a asp-action="Index" asp-route-estado="Rechazado" class="btn btn-outline-danger @(estadoSeleccionado == "Rechazado" ? "active" : "")">Rechazadas</a>
+</div>
+
+<div class="mb-3">
+    <label for="searchInput" class="form-label">Buscar</label>
+    <input type="text" id="searchInput" class="form-control" placeholder="Buscar por nombre, estado o usuario" />
+</div>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">No hay citas en este estado.</div>
+}
+else
+{
+    <div class="table-responsive">
+        <table id="tablaCitas" class="table table-striped table-bordered dt-responsive nowrap" style="width:100%">
+            <thead class="bg-light">
+                <tr>
+                    @if (usuarioRol == "Administrador" || usuarioRol == "Empleado")
+                    {
+                        <th>Encargado</th>
+                    }
+                    <th>Producto</th>
+                    <th>Fecha</th>
+                    <th>Estado</th>
+                    <th>Usuario</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        @if (usuarioRol == "Administrador" || usuarioRol == "Empleado")
+                        {
+                            <td>@item.Encargado</td>
+                        }
+                        <td>@item.ProducConsulta</td>
+                        <td>@item.FechaCita.ToString("dd/MM/yyyy HH:mm")</td>
+                        <td>@item.Estado</td>
+                        <td>@item.Usuario?.NombreUsuario</td>
+                        <td>
+                            @* Botones con estilo ícono y tamaño pequeño, solo para Admin *@
+                            @if (usuarioRol == "Administrador")
+                            {
+                                <a asp-action="Edit" asp-route-id="@item.Id" title="Editar" class="text-primary me-2">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+
+                                <a href="#" class="text-danger eliminarCita me-2"
+                                   data-id="@item.Id"
+                                   data-nombre="@item.NombreCita"
+                                   data-bs-toggle="modal"
+                                   data-bs-target="#confirmarEliminarModal"
+                                   title="Eliminar">
+                                    <i class="bi bi-trash"></i>
+                                </a>
+                            }
+
+                            @* Detalles para todos *@
+                            <a asp-action="Details" asp-route-id="@item.Id" title="Detalles" class="text-info">
+                                <i class="bi bi-eye"></i>
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+
+<!-- Modal de confirmación para eliminar -->
+<div class="modal fade" id="confirmarEliminarModal" tabindex="-1" aria-labelledby="confirmarEliminarModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form id="formEliminar" method="post">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="confirmarEliminarModalLabel">Confirmar eliminación</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                    ¿Está seguro de que desea eliminar la cita <strong id="nombreCita"></strong>?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-danger">Eliminar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <link href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap5.min.css" rel="stylesheet" />
+    <link href="https://cdn.datatables.net/responsive/2.4.1/css/responsive.bootstrap5.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js"></script>
+    <script src="https://cdn.datatables.net/responsive/2.4.1/js/dataTables.responsive.min.js"></script>
+    <script src="https://cdn.datatables.net/responsive/2.4.1/js/responsive.bootstrap5.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        $(document).ready(function () {
+            const table = $('#tablaCitas').DataTable({
+                language: {
+                    url: "//cdn.datatables.net/plug-ins/1.10.25/i18n/Spanish.json"
+                },
+                responsive: true,
+                paging: true,
+                info: false,
+                searching: true,
+                ordering: true,
+                dom: 'tp'
+            });
+
+            $('#searchInput').on('keyup', function () {
+                table.search(this.value).draw();
+            });
+
+            let citaId = 0;
+
+            $('.eliminarCita').on('click', function () {
+                citaId = $(this).data('id');
+                const nombre = $(this).data('nombre');
+                $('#nombreCita').text(nombre);
+                $('#formEliminar').attr('action', '/Citas/Delete/' + citaId);
+            });
+        });
+    </script>
+}

@@ -1,0 +1,126 @@
+﻿@model NEXA.Models.Citas
+
+@{
+    ViewData["Title"] = "Crear Cita";
+}
+
+<div class="container py-4">
+    <div class="card shadow-sm p-4">
+        <h4 class="text-center mb-4">@ViewData["Title"]</h4>
+
+        <!-- Cuadro informativo -->
+        <div class="alert alert-info" role="alert">
+            <strong>Importante:</strong> Las citas solo pueden agendarse de <strong>lunes a viernes</strong> entre <strong>08:00</strong> y <strong>16:00</strong>.
+        </div>
+
+        <hr />
+
+        <form asp-action="Create" method="post" novalidate>
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label asp-for="NombreCita" class="form-label"></label>
+                    <input asp-for="NombreCita" class="form-control" placeholder="Título o nombre de la cita" />
+                    <span asp-validation-for="NombreCita" class="text-danger"></span>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label asp-for="TipoCita" class="form-label">Motivo</label>
+                    <select asp-for="TipoCita" class="form-select">
+                        <option value="">-- Selecciona el tipo de cita --</option>
+                        <option value="Mantenimiento">Mantenimiento</option>
+                        <option value="Soporte Tecnico">Soporte Técnico</option>
+                    </select>
+                    <span asp-validation-for="TipoCita" class="text-danger"></span>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label asp-for="ProducConsulta" class="form-label">Producto</label>
+                    <select asp-for="ProducConsulta" class="form-select">
+                        <option value="">-- Selecciona el tipo de producto --</option>
+                        <option value="UPS">UPS</option>
+                        <option value="Panel Solar">Panel Solar</option>
+                        <option value="Panel Solar">Varios productos</option>
+                    </select>
+                    <span asp-validation-for="ProducConsulta" class="text-danger"></span>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label asp-for="NumeroTelefonico" class="form-label">Teléfono</label>
+                    <input asp-for="NumeroTelefonico" class="form-control" type="tel" placeholder="Número de contacto" />
+                    <span asp-validation-for="NumeroTelefonico" class="text-danger"></span>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label asp-for="Direccion" class="form-label"></label>
+                    <input asp-for="Direccion" class="form-control" placeholder="Agregar dirección exacta" />
+                    <span asp-validation-for="Direccion" class="text-danger"></span>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label asp-for="Detalles" class="form-label"></label>
+                    <textarea asp-for="Detalles" class="form-control" rows="2" 
+                    placeholder="Definir detalles sobre lo sucedido con el producto, en dado caso especificar cuales productos presentan inconvenientes "></textarea>
+                    <span asp-validation-for="Detalles" class="text-danger"></span>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Fecha de la cita</label>
+                    <input type="date" id="fecha" class="form-control" min="@DateTime.Now.ToString("yyyy-MM-dd")" />
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Hora de la cita</label>
+                    <input type="time" id="hora" class="form-control" min="08:00" max="16:00" />
+                </div>
+            </div>
+
+            <!-- Campos ocultos -->
+            <input type="hidden" asp-for="FechaCita" id="FechaCita" />
+            <input type="hidden" asp-for="Estado" value="Pendiente" />
+            <input type="hidden" asp-for="Encargado" value="Definir encargado" />
+
+            <div class="d-flex justify-content-start mt-3">
+                <button type="submit" class="btn btn-primary">Crear</button>
+                <a asp-action="Index" class="btn btn-secondary ms-2">Cancelar</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+
+    <script>
+        document.querySelector('form').addEventListener('submit', function (e) {
+            const fechaInput = document.getElementById('fecha');
+            const horaInput = document.getElementById('hora');
+            const hiddenFechaCita = document.getElementById('FechaCita');
+
+            if (!fechaInput.value || !horaInput.value) {
+                e.preventDefault();
+                alert("Debes seleccionar una fecha y una hora para la cita.");
+                return;
+            }
+
+            const fecha = new Date(fechaInput.value + 'T' + horaInput.value);
+            const dia = fecha.getDay(); // 0=domingo, 6=sábado
+            const hora = fecha.getHours();
+
+            if (dia === 0 || dia === 6) {
+                e.preventDefault();
+                alert("Las citas solo pueden agendarse de lunes a viernes.");
+                return;
+            }
+
+            if (hora < 8 || hora >= 16) {
+                e.preventDefault();
+                alert("La hora debe estar entre 08:00 y 16:00.");
+                return;
+            }
+
+            hiddenFechaCita.value = fecha.toISOString();
+        });
+    </script>
+}

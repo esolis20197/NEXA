@@ -1,0 +1,83 @@
+﻿@model NEXA.Models.Citas
+
+@{
+    ViewData["Title"] = "Editar Cita";
+}
+
+<div class="container py-4">
+    <div class="card shadow-sm p-4">
+        <h4 class="text-center mb-4">@ViewData["Title"]</h4>
+        <hr />
+        <form asp-action="Edit">
+            <input type="hidden" asp-for="Id" />
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+            <!-- Campos solo lectura (visibles pero no editables) -->
+            <div class="mb-3">
+                <label asp-for="NombreCita" class="form-label"></label>
+                <input class="form-control" value="@Model.NombreCita" readonly />
+                <input type="hidden" asp-for="NombreCita" />
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="TipoCita" class="form-label"></label>
+                <input class="form-control" value="@Model.TipoCita" readonly />
+                <input type="hidden" asp-for="TipoCita" />
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="ProducConsulta" class="form-label">Producto</label>
+                <input class="form-control" value="@Model.ProducConsulta" readonly />
+                <input type="hidden" asp-for="ProducConsulta" />
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="NumeroTelefonico">Teléfono</label>
+                <input class="form-control" value="@Model.NumeroTelefonico" readonly />
+                <input type="hidden" asp-for="NumeroTelefonico" />
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Direccion" class="form-label"></label>
+                <input class="form-control" value="@Model.Direccion" readonly />
+                <input type="hidden" asp-for="Direccion" />
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Detalles" class="form-label"></label>
+                <textarea class="form-control" rows="3" readonly>@Model.Detalles</textarea>
+                <input type="hidden" asp-for="Detalles" />
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="FechaCita" class="form-label"></label>
+                <input class="form-control" type="datetime-local" value="@Model.FechaCita.ToString("yyyy-MM-ddTHH:mm")" readonly />
+                <input type="hidden" asp-for="FechaCita" />
+            </div>
+
+            <!-- Campos editables -->
+            <div class="mb-3">
+                <label asp-for="Encargado" class="form-label"></label>
+                <input asp-for="Encargado" class="form-control" />
+                <span asp-validation-for="Encargado" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Estado" class="form-label"></label>
+                <select asp-for="Estado" class="form-select">
+                    <option value="Pendiente">Pendiente</option>
+                    <option value="Aprobado">Aprobado</option>
+                    <option value="Rechazado">Rechazado</option>
+                </select>
+                <span asp-validation-for="Estado" class="text-danger"></span>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Actualizar</button>
+            <a asp-action="Index" class="btn btn-secondary ms-2">Cancelar</a>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+}

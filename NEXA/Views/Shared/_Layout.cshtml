@@ -87,24 +87,32 @@
                     <ul class="nav flex-column">
                         @if (usuarioRol == "Administrador")
                         {
-                            <li class="nav-item"><a class="nav-link text-white sidebar-link" asp-controller="Usuarios" asp-action="Index"><i class="fas fa-users pe-2"></i>Control de Usuarios</a></li>
+                            <li class="nav-item"><a class="nav-link text-white sidebar-link" asp-controller="Usuarios" asp-action="Index"><i class="fas fa-users pe-2"></i>Control de usuarios</a></li>
                             <li class="nav-item"><a class="nav-link text-white sidebar-link" asp-controller="Proyecto" asp-action="Index"><i class="fas fa-project-diagram pe-2"></i>Proyectos</a></li>
                             <li class="nav-item"><a class="nav-link text-white sidebar-link" asp-controller="Inventarios" asp-action="Index"><i class="fas fa-box pe-2"></i>Inventario</a></li>
-                            <li class="nav-item"><a class="nav-link text-white sidebar-link" asp-controller="Pedido" asp-action="Historial"><i class="fas fa-clock pe-2"></i>Historial de Pedidos</a></li>
+                            <li class="nav-item"><a class="nav-link text-white sidebar-link" asp-controller="Pedido" asp-action="Historial"><i class="fas fa-clock pe-2"></i>Historial de pedidos</a></li>
+                            <li class="nav-item"><a class="nav-link text-white sidebar-link" asp-controller="Citas" asp-action="Index"><i class="fas fa-clock pe-2"></i>Historial de citas</a></li>
+
+                        
                         }
                         else if (usuarioRol == "Empleado")
                         {
-                            <li class="nav-item"><a class="nav-link text-white sidebar-link" asp-controller="Home" asp-action="IndexEmpleado"><i class="fas fa-calendar-alt pe-2"></i>Inicio Empleado</a></li>
+                            <li class="nav-item"><a class="nav-link text-white sidebar-link" asp-controller="Home" asp-action="IndexEmpleado"><i class="fas fa-calendar-alt pe-2"></i>Inicio empleado</a></li>
                             <li class="nav-item"><a class="nav-link text-white sidebar-link" asp-controller="Proyecto" asp-action="Index"><i class="fas fa-project-diagram pe-2"></i>Proyectos</a></li>
-                            <li class="nav-item"><a class="nav-link text-white sidebar-link" asp-controller="Pedido" asp-action="Historial"><i class="fas fa-clock pe-2"></i>Historial de Pedidos</a></li>
+                            <li class="nav-item"><a class="nav-link text-white sidebar-link" asp-controller="Pedido" asp-action="Historial"><i class="fas fa-clock pe-2"></i>Historial de pedidos</a></li>
+                            <li class="nav-item"><a class="nav-link text-white sidebar-link" asp-controller="Citas" asp-action="Index"><i class="fas fa-clock pe-2"></i>Historial de citas</a></li>
+
+                        
                         }
                         else if (usuarioRol == "Usuario")
                         {
-                            <li class="nav-item"><a class="nav-link text-white sidebar-link" asp-controller="Home" asp-action="IndexCliente"><i class="fas fa-home pe-2"></i>Inicio Cliente</a></li>
+                            <li class="nav-item"><a class="nav-link text-white sidebar-link" asp-controller="Home" asp-action="IndexCliente"><i class="fas fa-home pe-2"></i>Inicio cliente</a></li>
+                            <li class="nav-item"><a class="nav-link text-white sidebar-link" asp-controller="Citas" asp-action="Index"><i class="fas fa-clock pe-2"></i>Solicitar citas</a></li>
+
                         }
 
                         <li class="nav-item"><hr class="text-white" /></li>
-                        <li class="nav-item"><a class="nav-link text-white sidebar-link" asp-controller="Usuarios" asp-action="Perfil"><i class="fas fa-user pe-2"></i>Mi Perfil</a></li>
+                        <li class="nav-item"><a class="nav-link text-white sidebar-link" asp-controller="Usuarios" asp-action="Perfil"><i class="fas fa-user pe-2"></i>Mi perfil</a></li>
                         <li class="nav-item mt-3 text-center">
                             <a asp-controller="Acceso" asp-action="CerrarSesion"
                                class="bg-danger text-white py-2 px-3 rounded text-decoration-none d-inline-block"
