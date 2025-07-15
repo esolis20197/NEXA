@@ -2,24 +2,29 @@
 
 @{
     ViewData["Title"] = "Detalle del Pedido";
+    var usuarioRol = Context.Session.GetString("UsuarioRol");
     var total = Model.Detalles.Sum(d => d.Cantidad * d.PrecioUnitario);
 }
 
 <div class="container py-4">
-    <h3 class="mb-4">@ViewData["Title"]</h3>
 
-    <div class="card mb-4">
-        <div class="card-body">
-            <h5 class="card-title">Información del Usuario</h5>
-            <p><strong>Nombre:</strong> @Model.Usuario.NombreCompleto</p>
-            <p><strong>Correo:</strong> @Model.Usuario.Correo</p>
-            <p><strong>Teléfono:</strong> @Model.Usuario.Telefono</p>
+    @if (usuarioRol != "Usuario")
+    {
+        <div class="card mb-4">
+            <div class="card-body">
+                <h4 class="text-center mb-4">Información del Usuario</h4>
+                <hr />
+                <p><strong>Nombre:</strong> @Model.Usuario.NombreCompleto</p>
+                <p><strong>Correo:</strong> @Model.Usuario.Correo</p>
+                <p><strong>Teléfono:</strong> @Model.Usuario.Telefono</p>
+            </div>
         </div>
-    </div>
+    }
 
     <div class="card mb-4">
         <div class="card-body">
-            <h5 class="card-title">Detalles del Pedido</h5>
+            <h4 class="text-center mb-4">@ViewData["Title"]</h4>
+            <hr />
             <p><strong>Fecha:</strong> @Model.FechaPedido.ToString("dd/MM/yyyy HH:mm")</p>
             <p><strong>Estado:</strong> @Model.Estado</p>
 
@@ -51,7 +56,8 @@
                 </tfoot>
             </table>
         </div>
+        <div class="card-footer bg-white border-top-0">
+            <a asp-action="Historial" class="btn btn-secondary">Volver al listado</a>
+        </div>
     </div>
-
-    <a asp-action="Historial" class="btn btn-secondary">Volver al Historial</a>
 </div>

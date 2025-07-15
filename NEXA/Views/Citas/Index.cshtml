@@ -40,7 +40,10 @@ else
                     <th>Producto</th>
                     <th>Fecha</th>
                     <th>Estado</th>
-                    <th>Usuario</th>
+                    @if (usuarioRol != "Usuario")
+                    {
+                        <th>Usuario</th>
+                    }
                     <th>Acciones</th>
                 </tr>
             </thead>
@@ -55,7 +58,10 @@ else
                         <td>@item.ProducConsulta</td>
                         <td>@item.FechaCita.ToString("dd/MM/yyyy HH:mm")</td>
                         <td>@item.Estado</td>
-                        <td>@item.Usuario?.NombreUsuario</td>
+                        @if (usuarioRol != "Usuario")
+                        {
+                            <td>@item.Usuario?.NombreUsuario</td>
+                        }                        
                         <td>
                             @* Botones con estilo ícono y tamaño pequeño, solo para Admin *@
                             @if (usuarioRol == "Administrador")

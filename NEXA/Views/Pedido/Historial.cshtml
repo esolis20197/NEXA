@@ -3,6 +3,7 @@
 @{
     ViewData["Title"] = "Historial de Pedidos";
     var estado = ViewBag.EstadoSeleccionado as string ?? "Pendiente";
+    var usuarioRol = Context.Session.GetString("UsuarioRol");
 }
 
 <div class="container py-4">
@@ -24,7 +25,10 @@
             <thead>
                 <tr>
                     <th>Fecha</th>
-                    <th>Usuario</th>
+                    @if (usuarioRol != "Usuario")
+                    {
+                        <th>Usuario</th>
+                    }                    
                     <th>Estado</th>
                     <th>Total</th>
                     <th>Acciones</th>
@@ -36,12 +40,15 @@
                     var total = pedido.Detalles.Sum(d => d.Cantidad * d.PrecioUnitario);
                     <tr>
                         <td>@pedido.FechaPedido.ToString("dd/MM/yyyy HH:mm")</td>
-                        <td>@pedido.Usuario.NombreUsuario</td>
+                        @if (usuarioRol != "Usuario")
+                        {
+                            <td>@pedido.Usuario.NombreUsuario</td>
+                        }
                         <td>@pedido.Estado</td>
                         <td>₡@total.ToString("N2")</td>
                         <td>
                             <a asp-action="Ver" asp-route-id="@pedido.Id" class="btn btn-sm btn-primary me-2">Ver</a>
-                            @if (estado == "Pendiente")
+                            @if (estado == "Pendiente" && usuarioRol != "Usuario")
                             {
                                 <button type="button" class="btn btn-sm btn-success me-2" onclick="confirmarAccion(@pedido.Id, 'Completar')">Completar</button>
                                 <button type="button" class="btn btn-sm btn-danger" onclick="confirmarAccion(@pedido.Id, 'Rechazar')">Rechazar</button>
