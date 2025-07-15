@@ -23,9 +23,20 @@ namespace NEXA.Controllers
         // GET: Proyecto
         public async Task<IActionResult> Index()
         {
-            var nEXAContext = _context.Proyecto.Include(p => p.Usuario);
-            return View(await nEXAContext.ToListAsync());
+            var rol = HttpContext.Session.GetString("UsuarioRol");
+            var usuarioIdStr = HttpContext.Session.GetString("UsuarioId");
+
+            IQueryable<Proyecto> proyectos = _context.Proyecto.Include(p => p.Usuario);
+
+            if (rol == "Usuario" && int.TryParse(usuarioIdStr, out int usuarioId))
+            {
+                proyectos = proyectos.Where(p => p.UsuarioID == usuarioId);
+            }
+
+            return View(await proyectos.ToListAsync());
         }
+
+
 
         // GET: Proyecto/Details/5
         public async Task<IActionResult> Details(int? id)
@@ -34,6 +45,7 @@ namespace NEXA.Controllers
 
             var proyecto = await _context.Proyecto
                 .Include(p => p.Usuario)
+                .Include(p => p.PermisosInstalacion)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (proyecto == null) return NotFound();
 
@@ -43,14 +55,14 @@ namespace NEXA.Controllers
         // GET: Proyecto/Create
         public IActionResult Create()
         {
-            ViewData["UsuarioID"] = new SelectList(_context.Usuario, "Id", "NombreUsuario");
+            ViewData["UsuarioID"] = new SelectList(_context.Usuario, "Id", "NombreCompleto");
             return View();
         }
 
         // POST: Proyecto/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Nombre,FechaInicio,FechaFin,Descripcion,Fotos,UsuarioID,estado")] Proyecto proyecto)
+        public async Task<IActionResult> Create([Bind("Id,Nombre,FechaInicio,FechaFin,Descripcion,Fotos,UsuarioID,estado,RequiereDocumentos")] Proyecto proyecto)
         {
             if (ModelState.IsValid)
             {
@@ -60,7 +72,7 @@ namespace NEXA.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            ViewData["UsuarioID"] = new SelectList(_context.Usuario, "Id", "NombreUsuario", proyecto.UsuarioID);
+            ViewData["UsuarioID"] = new SelectList(_context.Usuario, "Id", "NombreCompleto", proyecto.UsuarioID);
             return View(proyecto);
         }
 
@@ -72,14 +84,14 @@ namespace NEXA.Controllers
             var proyecto = await _context.Proyecto.FindAsync(id);
             if (proyecto == null) return NotFound();
 
-            ViewData["UsuarioID"] = new SelectList(_context.Usuario, "Id", "NombreUsuario", proyecto.UsuarioID);
+            ViewData["UsuarioID"] = new SelectList(_context.Usuario, "Id", "NombreCompleto", proyecto.UsuarioID);
             return View(proyecto);
         }
 
         // POST: Proyecto/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Nombre,FechaInicio,FechaFin,Descripcion,Fotos,UsuarioID,estado")] Proyecto proyecto)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Nombre,FechaInicio,FechaFin,Descripcion,Fotos,UsuarioID,estado,RequiereDocumentos")] Proyecto proyecto)
         {
             if (id != proyecto.Id) return NotFound();
 
@@ -101,7 +113,7 @@ namespace NEXA.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            ViewData["UsuarioID"] = new SelectList(_context.Usuario, "Id", "NombreUsuario", proyecto.UsuarioID);
+            ViewData["UsuarioID"] = new SelectList(_context.Usuario, "Id", "NombreCompleto", proyecto.UsuarioID);
             return View(proyecto);
         }
 

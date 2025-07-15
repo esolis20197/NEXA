@@ -2,13 +2,17 @@
 
 @{
     ViewData["Title"] = "Proyectos";
+    var usuarioRol = Context.Session.GetString("UsuarioRol");
 }
 
 <h1>Proyectos</h1>
 
-<a asp-action="Create" class="btn btn-primary mb-3">
-    <i class="bi bi-plus-circle me-1"></i> Crear nuevo proyecto
-</a>
+@if (usuarioRol != "Usuario")
+{
+    <a asp-action="Create" class="btn btn-primary mb-3">
+        <i class="bi bi-plus-circle me-1"></i> Crear nuevo proyecto
+    </a>
+}
 
 <div class="mb-3">
     <label for="searchInput" class="form-label">Buscar</label>
@@ -23,7 +27,10 @@
                 <th>Fecha Inicio</th>
                 <th>Fecha Fin</th>
                 <th>Estado</th>
-                <th>Encargado</th>
+                @if (usuarioRol != "Usuario")
+                {
+                    <th>Encargado</th>
+                }
                 <th>Acciones</th>
             </tr>
         </thead>
@@ -31,28 +38,50 @@
             @foreach (var item in Model)
             {
                 <tr>
-                    <td>@item.Nombre</td>
+                    <td>@item.Nombre
+                        @if (item.RequiereDocumentos)
+                        {
+                            <span class="badge bg-danger animate__animated animate__flash ms-2">
+                                <i class="fa-solid fa-file-circle-exclamation"></i>
+                            </span>
+                        }
+                    </td>
                     <td>@item.FechaInicio.ToShortDateString()</td>
                     <td>@item.FechaFin.ToShortDateString()</td>
                     <td>@item.estado</td>
-                    <td>@item.Usuario?.NombreUsuario</td>
+
+                    @if (usuarioRol != "Usuario")
+                    {
+                        <td>@item.Usuario?.NombreCompleto</td>
+                    }
+
                     <td>
-                        <a asp-action="Edit" asp-route-id="@item.Id" title="Editar"><i class="bi bi-pencil m-1"></i></a>
-                        <a asp-action="Details" asp-route-id="@item.Id" title="Detalles"><i class="bi bi-eye m-1"></i></a>
-                        <a href="#" class="text-danger eliminarProyecto"
-                           data-id="@item.Id"
-                           data-nombre="@item.Nombre"
-                           data-bs-toggle="modal"
-                           data-bs-target="#confirmarEliminarModal"
-                           title="Eliminar">
-                            <i class="bi bi-trash m-1"></i>
+                        <a asp-action="Details" asp-route-id="@item.Id" title="Detalles">
+                            <i class="bi bi-eye m-1"></i>                            
                         </a>
 
-                        @if (item.estado != "Finalizado")
+
+                        @if (usuarioRol != "Usuario")
                         {
-                            <button class="btn btn-success btn-sm btn-finalizar" data-id="@item.Id" title="Marcar como finalizado">
-                                Finalizado
-                            </button>
+                            <a asp-action="Edit" asp-route-id="@item.Id" title="Editar">
+                                <i class="bi bi-pencil m-1"></i>
+                            </a>
+
+                            <a href="#" class="text-danger eliminarProyecto"
+                               data-id="@item.Id"
+                               data-nombre="@item.Nombre"
+                               data-bs-toggle="modal"
+                               data-bs-target="#confirmarEliminarModal"
+                               title="Eliminar">
+                                <i class="bi bi-trash m-1"></i>
+                            </a>                            
+                            /*
+                            @if (item.estado != "Finalizado")
+                            {
+                                <button class="btn btn-success btn-sm btn-finalizar" data-id="@item.Id" title="Marcar como finalizado">
+                                    Finalizado
+                                </button>
+                            }*/
                         }
                     </td>
                 </tr>
@@ -61,26 +90,6 @@
     </table>
 </div>
 
-<!-- Modal de Confirmación de Eliminación -->
-<div class="modal fade" id="confirmarEliminarModal" tabindex="-1" aria-labelledby="confirmarEliminarModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <form id="formEliminar" method="post">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="confirmarEliminarModalLabel">Confirmar eliminación</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-                </div>
-                <div class="modal-body">
-                    ¿Está seguro de que desea eliminar el proyecto <strong id="nombreProyecto"></strong>?
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="submit" class="btn btn-danger">Eliminar</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
 
 @section Scripts {
     <link href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap5.min.css" rel="stylesheet" />

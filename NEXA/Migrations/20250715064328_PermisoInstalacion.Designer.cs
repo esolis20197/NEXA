@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NEXA.Models;
 
@@ -11,9 +12,11 @@ using NEXA.Models;
 namespace NEXA.Migrations
 {
     [DbContext(typeof(NEXAContext))]
-    partial class NEXAContextModelSnapshot : ModelSnapshot
+    [Migration("20250715064328_PermisoInstalacion")]
+    partial class PermisoInstalacion
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -266,7 +269,7 @@ namespace NEXA.Migrations
 
                     b.HasIndex("ProyectoID");
 
-                    b.ToTable("PermisosInstalacion");
+                    b.ToTable("PermisoInstalacion");
                 });
 
             modelBuilder.Entity("NEXA.Models.Proyecto", b =>
@@ -294,9 +297,6 @@ namespace NEXA.Migrations
                     b.Property<string>("Nombre")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("RequiereDocumentos")
-                        .HasColumnType("bit");
 
                     b.Property<int>("UsuarioID")
                         .HasColumnType("int");

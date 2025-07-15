@@ -19,6 +19,9 @@ namespace NEXA.Models
 
         public DbSet<Citas> Citas { get; set; }
 
+        public DbSet<PermisoInstalacion> PermisosInstalacion { get; set; }
+
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -41,6 +44,14 @@ namespace NEXA.Models
             modelBuilder.Entity<Citas>()
                  .HasIndex(c => new { c.UsuarioID, c.FechaCita })
                  .IsUnique();
+
+            // Relación uno a muchos entre Proyecto y PermisosInstalacion
+            modelBuilder.Entity<PermisoInstalacion>()
+                .HasOne(p => p.Proyecto)
+                .WithMany(pr => pr.PermisosInstalacion)
+                .HasForeignKey(p => p.ProyectoID)
+                .OnDelete(DeleteBehavior.Cascade);
+
 
         }
     }

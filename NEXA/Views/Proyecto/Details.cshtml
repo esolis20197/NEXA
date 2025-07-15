@@ -3,7 +3,6 @@
 
 @{
     var usuarioRol = Context.Session.GetString("UsuarioRol");
-    bool esAdministrador = usuarioRol == "Administrador";
     ViewData["Title"] = "Detalles del Proyecto";
 }
 
@@ -39,17 +38,131 @@
                         <dd class="col-sm-8">@Model.estado</dd>
 
                         <dt class="col-sm-4 fw-semibold">Usuario</dt>
-                        <dd class="col-sm-8">@Model.Usuario?.NombreUsuario</dd>
+                        <dd class="col-sm-8">@Model.Usuario?.NombreCompleto</dd>
                     </dl>
-                    <div>
-                        @if (esAdministrador)
+
+                    @if (Model.RequiereDocumentos)
+                    {
+                        <div class="alert alert-info">
+                            <strong>Este proyecto requiere documentación adicional.</strong>
+                        </div>
+
+                        @if (usuarioRol == "Usuario")
+                        {
+                            <form asp-controller="PermisosInstalacion" asp-action="Subir" method="post" enctype="multipart/form-data" class="mb-3">
+                                <input type="hidden" name="ProyectoID" value="@Model.Id" />
+                                <label class="form-label">Selecciona el documento para subir:</label>
+                                <input type="file" name="archivo" class="form-control mb-2" required />
+                                <button type="submit" class="btn btn-success">Subir documento</button>
+                            </form>
+                        }
+
+                        @if (Model.PermisosInstalacion != null && Model.PermisosInstalacion.Any())
+                        {
+                            <h5 class="mt-4">Documentos cargados:</h5>
+                            <table class="table table-bordered table-hover align-middle">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Archivo</th>
+                                        <th>Fecha de subida</th>
+                                        <th>Estado</th>
+                                        <th>Ver</th>
+                                        @if (usuarioRol != "Usuario")
+                                        {
+                                            <th>Acciones</th>
+                                        }
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var permiso in Model.PermisosInstalacion)
+                                    {
+                                        <tr>
+                                            <td>@permiso.NombreArchivo</td>
+                                            <td>@permiso.FechaSubida.ToString("dd/MM/yyyy")</td>
+                                            <td>
+                                                @switch (permiso.Estado)
+                                                {
+                                                    case "Pendiente":
+                                                        <span class="badge bg-warning text-dark">Pendiente</span>
+                                                        break;
+                                                    case "Aprobado":
+                                                        <span class="badge bg-success">Aprobado</span>
+                                                        break;
+                                                    case "Rechazado":
+                                                        <span class="badge bg-danger">Rechazado</span>
+                                                        break;
+                                                    default:
+                                                        <span class="badge bg-secondary">@permiso.Estado</span>
+                                                        break;
+                                                }
+                                            </td>
+                                            <td>
+                                                <a class="btn btn-outline-primary btn-sm" href="@Url.Content(permiso.RutaArchivo)" target="_blank" rel="noopener noreferrer">Ver</a>
+                                            </td>
+
+                                            @if (usuarioRol != "Usuario")
+                                            {
+                                                <td>
+                                                    @if (permiso.Estado == "Pendiente")
+                                                    {
+                                                        <form asp-controller="PermisosInstalacion" asp-action="Aprobar" method="post" class="d-inline me-2">
+                                                            <input type="hidden" name="id" value="@permiso.Id" />
+                                                            <button type="submit" class="btn btn-success btn-sm">Aprobar</button>
+                                                        </form>                                                        
+                                                        <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#modalRechazo-@permiso.Id">
+                                                            Rechazar
+                                                        </button>
+
+                                                    }
+                                                    else
+                                                    {
+                                                        <em>-</em>
+                                                    }
+                                                </td>
+                                            }
+                                        </tr>
+                                        <div class="modal fade" id="modalRechazo-@permiso.Id" tabindex="-1" aria-labelledby="modalLabel-@permiso.Id" aria-hidden="true">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <form asp-controller="PermisosInstalacion" asp-action="Rechazar" method="post">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title" id="modalLabel-@permiso.Id">Motivo del rechazo</h5>
+                                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <input type="hidden" name="id" value="@permiso.Id" />
+                                                            <div class="mb-3">
+                                                                <label for="motivo" class="form-label">Indique el motivo del rechazo:</label>
+                                                                <textarea name="motivo" class="form-control" required rows="3" placeholder="Ej: El documento no está firmado correctamente."></textarea>
+                                                            </div>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="submit" class="btn btn-danger">Enviar rechazo</button>
+                                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }                                    
+                                </tbody>
+                            </table>
+                        }
+                        else
+                        {
+                            <p class="text-muted">Aún no se han subido documentos.</p>
+                        }
+                    }
+
+                    <div class="mt-4">
+                        @if (usuarioRol != "Usuario")
                         {
                             <a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-primary me-2">Editar</a>
                             <a asp-action="Index" class="btn btn-secondary">Volver al listado</a>
                         }
                         else
                         {
-                            <a asp-action="IndexCliente" class="btn btn-secondary">Volver al listado</a>
+                            <a asp-action="Index" class="btn btn-secondary">Volver al listado</a>
                         }
                     </div>
                 </div>

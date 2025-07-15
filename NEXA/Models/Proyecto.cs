@@ -35,6 +35,12 @@ namespace NEXA.Models
 
         public Usuario? Usuario { get; set; }
 
+        public bool RequiereDocumentos { get; set; } = false;
+
+        public ICollection<PermisoInstalacion> PermisosInstalacion { get; set; } = new List<PermisoInstalacion>();
+
+
+
         // Validaciones personalizadas
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {

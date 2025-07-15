@@ -50,6 +50,13 @@
                 </select>
                 <span asp-validation-for="UsuarioID" class="text-danger"></span>
             </div>
+
+            <div class="form-check mb-3">
+                <input class="form-check-input" asp-for="RequiereDocumentos" />
+                <label class="form-check-label" asp-for="RequiereDocumentos">
+                    ¿Requiere documentos de instalación?
+                </label>
+            </div>
            
             <div class="mb-3">
                 <label asp-for="estado" class="form-label"></label>
