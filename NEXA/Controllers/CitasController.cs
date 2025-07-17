@@ -17,7 +17,7 @@ namespace NEXA.Controllers
         }
 
         // GET: Citas
-        public async Task<IActionResult> Index(string estado = "Pendiente")
+        public async Task<IActionResult> Index(string estado = null)
         {
             var usuarioIdStr = HttpContext.Session.GetString("UsuarioId");
             var rolUsuario = HttpContext.Session.GetString("UsuarioRol");
@@ -33,16 +33,23 @@ namespace NEXA.Controllers
 
             IQueryable<Citas> citasQuery = _context.Citas.Include(c => c.Usuario);
 
+            // Si no es administrador, solo puede ver sus propias citas
             if (rolUsuario != "Administrador")
             {
                 citasQuery = citasQuery.Where(c => c.UsuarioID == usuarioId);
             }
 
-            citasQuery = citasQuery.Where(c => c.Estado == estado);
+            // Si se especifica estado, filtramos por ese estado
+            if (!string.IsNullOrEmpty(estado))
+            {
+                citasQuery = citasQuery.Where(c => c.Estado == estado);
+            }
 
             var citas = await citasQuery.ToListAsync();
             return View(citas);
         }
+
+
 
         // GET: Citas/Details/5
         public async Task<IActionResult> Details(int? id)

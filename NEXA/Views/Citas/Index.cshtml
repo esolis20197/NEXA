@@ -2,17 +2,19 @@
 
 @{
     ViewData["Title"] = "Citas";
-    var estadoSeleccionado = ViewBag.EstadoSeleccionado as string ?? "Pendiente";
+    var estadoSeleccionado = ViewBag.EstadoSeleccionado as string;
     var usuarioRol = ViewBag.UsuarioRol as string ?? "Sin rol";
 }
 
-<h1 class="mb-3">Citas</h1>
-
-<a asp-action="Create" class="btn btn-primary mb-3">
-    <i class="bi bi-plus-circle me-1"></i> Crear nueva cita
-</a>
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-3">
+    <h1 class="mb-2 mb-md-0">Citas</h1>
+    <a asp-action="Create" class="btn btn-primary">
+        <i class="bi bi-plus-circle me-1"></i> Crear nueva cita
+    </a>
+</div>
 
 <div class="mb-3">
+    <a asp-action="Index" class="btn btn-outline-secondary @(string.IsNullOrEmpty(estadoSeleccionado) ? "active" : "")">Todas</a>
     <a asp-action="Index" asp-route-estado="Pendiente" class="btn btn-outline-primary @(estadoSeleccionado == "Pendiente" ? "active" : "")">Pendientes</a>
     <a asp-action="Index" asp-route-estado="Aprobado" class="btn btn-outline-success @(estadoSeleccionado == "Aprobado" ? "active" : "")">Aprobadas</a>
     <a asp-action="Index" asp-route-estado="Rechazado" class="btn btn-outline-danger @(estadoSeleccionado == "Rechazado" ? "active" : "")">Rechazadas</a>
@@ -57,11 +59,27 @@ else
                         }
                         <td>@item.ProducConsulta</td>
                         <td>@item.FechaCita.ToString("dd/MM/yyyy HH:mm")</td>
-                        <td>@item.Estado</td>
+                        <td>
+                            @switch (item.Estado)
+                            {
+                                case "Pendiente":
+                                    <span class="badge bg-warning text-dark">Pendiente</span>
+                                    break;
+                                case "Aprobado":
+                                    <span class="badge bg-success">Aprobado</span>
+                                    break;
+                                case "Rechazado":
+                                    <span class="badge bg-danger">Rechazado</span>
+                                    break;
+                                default:
+                                    <span class="badge bg-secondary">@item.Estado</span>
+                                    break;
+                            }
+                        </td>
                         @if (usuarioRol != "Usuario")
                         {
                             <td>@item.Usuario?.NombreUsuario</td>
-                        }                        
+                        }
                         <td>
                             @* Botones con estilo ícono y tamaño pequeño, solo para Admin *@
                             @if (usuarioRol == "Administrador")

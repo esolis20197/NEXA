@@ -91,31 +91,36 @@ namespace NEXA.Controllers
         // POST: Proyecto/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Nombre,FechaInicio,FechaFin,Descripcion,Fotos,UsuarioID,estado,RequiereDocumentos")] Proyecto proyecto)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,estado,RequiereDocumentos")] Proyecto proyecto)
         {
-            if (id != proyecto.Id) return NotFound();
+            if (id != proyecto.Id)
+                return NotFound();
 
-            if (ModelState.IsValid)
+            var proyectoExistente = await _context.Proyecto.FindAsync(id);
+            if (proyectoExistente == null)
+                return NotFound();
+
+            // Actualizar únicamente los campos permitidos
+            proyectoExistente.estado = proyecto.estado;
+            proyectoExistente.RequiereDocumentos = proyecto.RequiereDocumentos;
+
+            try
             {
-                try
-                {
-                    _context.Update(proyecto);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!ProyectoExists(proyecto.Id))
-                        return NotFound();
-                    else
-                        throw;
-                }
-
-                return RedirectToAction(nameof(Index));
+                _context.Update(proyectoExistente);
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!ProyectoExists(proyecto.Id))
+                    return NotFound();
+                else
+                    throw;
             }
 
-            ViewData["UsuarioID"] = new SelectList(_context.Usuario, "Id", "NombreCompleto", proyecto.UsuarioID);
-            return View(proyecto);
+            return RedirectToAction(nameof(Index));
         }
+
+
 
         // POST: Proyectos/Delete/5
         [HttpPost, ActionName("Delete")]

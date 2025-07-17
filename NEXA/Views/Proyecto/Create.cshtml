@@ -4,11 +4,15 @@
     ViewData["Title"] = "Crear Proyecto";
 }
 
+<!-- Flatpickr CSS y JS -->
+<link href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
 <div class="container py-4">
     <div class="card shadow-sm p-4">
         <h4 class="text-center mb-4">@ViewData["Title"]</h4>
         <hr />
-        <form asp-action="Create" novalidate>
+        <form asp-action="Create" novalidate id="formCrearProyecto">
             <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
             <div class="mb-3">
@@ -20,13 +24,13 @@
             <div class="row">
                 <div class="col-md-6 mb-3">
                     <label asp-for="FechaInicio" class="form-label"></label>
-                    <input asp-for="FechaInicio" class="form-control" type="date" />
+                    <input asp-for="FechaInicio" id="FechaInicio" class="form-control" type="text" />
                     <span asp-validation-for="FechaInicio" class="text-danger"></span>
                 </div>
 
                 <div class="col-md-6 mb-3">
                     <label asp-for="FechaFin" class="form-label"></label>
-                    <input asp-for="FechaFin" class="form-control" type="date" />
+                    <input asp-for="FechaFin" id="FechaFin" class="form-control" type="text" />
                     <span asp-validation-for="FechaFin" class="text-danger"></span>
                 </div>
             </div>
@@ -58,7 +62,6 @@
                 </label>
             </div>
 
-            <!-- Campo oculto para estado -->
             <input type="hidden" asp-for="estado" value="Pendiente" />
 
             <button type="submit" class="btn btn-primary">Crear</button>
@@ -71,4 +74,48 @@
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Inicializar flatpickr para las fechas con defaultDate "today"
+            const fechaInicioPicker = flatpickr("#FechaInicio", {
+                dateFormat: "Y-m-d",
+                defaultDate: "today",
+                minDate: "today"
+            });
+
+            const fechaFinPicker = flatpickr("#FechaFin", {
+                dateFormat: "Y-m-d",
+                defaultDate: "today",
+                minDate: "today"
+            });
+
+            // Validación manual para asegurar que FechaFin > FechaInicio
+            document.getElementById('formCrearProyecto').addEventListener('submit', function (e) {
+                const fechaInicio = fechaInicioPicker.selectedDates[0];
+                const fechaFin = fechaFinPicker.selectedDates[0];
+                const hoy = new Date();
+                hoy.setHours(0, 0, 0, 0); // Solo la fecha sin hora
+
+                let errores = [];
+
+                if (!fechaInicio) {
+                    errores.push("La fecha de inicio es requerida.");
+                } else if (fechaInicio < hoy) {
+                    errores.push("La fecha de inicio no puede ser anterior a hoy.");
+                }
+
+                if (!fechaFin) {
+                    errores.push("La fecha de fin es requerida.");
+                } else if (fechaFin <= fechaInicio) {
+                    errores.push("La fecha de fin debe ser posterior a la fecha de inicio.");
+                }
+
+                if (errores.length > 0) {
+                    e.preventDefault();
+                    alert(errores.join("\n"));
+                }
+            });
+        });
+    </script>
 }

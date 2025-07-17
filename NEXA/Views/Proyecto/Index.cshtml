@@ -5,14 +5,16 @@
     var usuarioRol = Context.Session.GetString("UsuarioRol");
 }
 
-<h1>Proyectos</h1>
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-3">
+    <h1 class="mb-2 mb-md-0">Proyectos</h1>
 
-@if (usuarioRol != "Usuario")
-{
-    <a asp-action="Create" class="btn btn-primary mb-3">
-        <i class="bi bi-plus-circle me-1"></i> Crear nuevo proyecto
-    </a>
-}
+    @if (usuarioRol != "Usuario")
+    {
+        <a asp-action="Create" class="btn btn-primary">
+            <i class="bi bi-plus-circle me-1"></i> Crear nuevo proyecto
+        </a>
+    }
+</div>
 
 <div class="mb-3">
     <label for="searchInput" class="form-label">Buscar</label>
@@ -38,7 +40,8 @@
             @foreach (var item in Model)
             {
                 <tr>
-                    <td>@item.Nombre
+                    <td>
+                        @item.Nombre
                         @if (item.RequiereDocumentos)
                         {
                             <span class="badge bg-danger animate__animated animate__flash ms-2">
@@ -48,7 +51,29 @@
                     </td>
                     <td>@item.FechaInicio.ToShortDateString()</td>
                     <td>@item.FechaFin.ToShortDateString()</td>
-                    <td>@item.estado</td>
+                    <td>
+                        @switch (item.estado)
+                        {
+                            case "Pendiente":
+                                <span class="badge bg-warning text-dark">Pendiente</span>
+                                break;
+                            case "Iniciado":
+                                <span class="badge bg-primary">Iniciado</span>
+                                break;
+                            case "En proceso":
+                                <span class="badge bg-info text-dark">En proceso</span>
+                                break;
+                            case "Finalizado":
+                                <span class="badge bg-success">Finalizado</span>
+                                break;
+                            case "Cancelado":
+                                <span class="badge bg-danger">Cancelado</span>
+                                break;
+                            default:
+                                <span class="badge bg-secondary">@item.estado</span>
+                                break;
+                        }
+                    </td>
 
                     @if (usuarioRol != "Usuario")
                     {
@@ -57,9 +82,8 @@
 
                     <td>
                         <a asp-action="Details" asp-route-id="@item.Id" title="Detalles">
-                            <i class="bi bi-eye m-1"></i>                            
+                            <i class="bi bi-eye m-1"></i>
                         </a>
-
 
                         @if (usuarioRol != "Usuario")
                         {
@@ -74,14 +98,7 @@
                                data-bs-target="#confirmarEliminarModal"
                                title="Eliminar">
                                 <i class="bi bi-trash m-1"></i>
-                            </a>                            
-                            /*
-                            @if (item.estado != "Finalizado")
-                            {
-                                <button class="btn btn-success btn-sm btn-finalizar" data-id="@item.Id" title="Marcar como finalizado">
-                                    Finalizado
-                                </button>
-                            }*/
+                            </a>
                         }
                     </td>
                 </tr>
@@ -168,7 +185,7 @@
                             type: 'POST',
                             success: function () {
                                 Swal.fire('¡Finalizado!', 'El proyecto ha sido marcado como finalizado.', 'success');
-                                button.closest('tr').find('td:nth-child(4)').text('Finalizado');
+                                button.closest('tr').find('td:nth-child(4)').html('<span class="badge bg-success">Finalizado</span>');
                                 button.remove();
                             },
                             error: function () {

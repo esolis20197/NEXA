@@ -60,19 +60,19 @@
 
                 <div class="col-md-6 mb-3">
                     <label asp-for="Detalles" class="form-label"></label>
-                    <textarea asp-for="Detalles" class="form-control" rows="2" 
-                    placeholder="Definir detalles sobre lo sucedido con el producto, en dado caso especificar cuales productos presentan inconvenientes "></textarea>
+                    <textarea asp-for="Detalles" class="form-control" rows="2"
+                              placeholder="Definir detalles sobre lo sucedido con el producto, en dado caso especificar cuales productos presentan inconvenientes "></textarea>
                     <span asp-validation-for="Detalles" class="text-danger"></span>
                 </div>
 
                 <div class="col-md-6 mb-3">
                     <label class="form-label">Fecha de la cita</label>
-                    <input type="date" id="fecha" class="form-control" min="@DateTime.Now.ToString("yyyy-MM-dd")" />
+                    <input id="fecha" class="form-control" placeholder="Selecciona una fecha" />
                 </div>
 
                 <div class="col-md-6 mb-3">
                     <label class="form-label">Hora de la cita</label>
-                    <input type="time" id="hora" class="form-control" min="08:00" max="16:00" />
+                    <input id="hora" class="form-control" placeholder="Selecciona una hora" />
                 </div>
             </div>
 
@@ -92,7 +92,37 @@
 @section Scripts {
     @await Html.PartialAsync("_ValidationScriptsPartial")
 
+    <!-- Flatpickr -->
+    <link href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
     <script>
+        // Flatpickr para fecha: solo lunes a viernes
+        flatpickr("#fecha", {
+            dateFormat: "Y-m-d",
+            minDate: "today",
+            disable: [
+                function (date) {
+                    return (date.getDay() === 0 || date.getDay() === 6); // domingos y sábados
+                }
+            ],
+            locale: {
+                firstDayOfWeek: 1
+            }
+        });
+
+        // Flatpickr para hora: solo entre 08:00 y 16:00
+        flatpickr("#hora", {
+            enableTime: true,
+            noCalendar: true,
+            dateFormat: "H:i",
+            time_24hr: true,
+            minTime: "08:00",
+            maxTime: "16:00",
+            minuteIncrement: 15
+        });
+
+        // Validación en el submit
         document.querySelector('form').addEventListener('submit', function (e) {
             const fechaInput = document.getElementById('fecha');
             const horaInput = document.getElementById('hora');

@@ -56,7 +56,24 @@
                                 <button type="submit" class="btn btn-success">Subir documento</button>
                             </form>
                         }
-
+                        @if (usuarioRol == "Empleado")
+                        {
+                            <form asp-controller="PermisosInstalacion" asp-action="Subir" method="post" enctype="multipart/form-data" class="mb-3">
+                                <input type="hidden" name="ProyectoID" value="@Model.Id" />
+                                <label class="form-label">Selecciona el documento para subir:</label>
+                                <input type="file" name="archivo" class="form-control mb-2" required />
+                                <button type="submit" class="btn btn-success">Subir documento</button>
+                            </form>
+                        }
+                        @if (usuarioRol == "Administrador")
+                        {
+                            <form asp-controller="PermisosInstalacion" asp-action="Subir" method="post" enctype="multipart/form-data" class="mb-3">
+                                <input type="hidden" name="ProyectoID" value="@Model.Id" />
+                                <label class="form-label">Selecciona el documento para subir:</label>
+                                <input type="file" name="archivo" class="form-control mb-2" required />
+                                <button type="submit" class="btn btn-success">Subir documento</button>
+                            </form>
+                        }
                         @if (Model.PermisosInstalacion != null && Model.PermisosInstalacion.Any())
                         {
                             <h5 class="mt-4">Documentos cargados:</h5>

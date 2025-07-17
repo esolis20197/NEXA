@@ -12,52 +12,60 @@
             <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
             <input type="hidden" asp-for="Id" />
 
+            <!-- Nombre -->
             <div class="mb-3">
                 <label asp-for="Nombre" class="form-label"></label>
-                <input asp-for="Nombre" class="form-control" placeholder="Nombre del proyecto" />
-                <span asp-validation-for="Nombre" class="text-danger"></span>
+                <input class="form-control" value="@Model.Nombre" disabled />
+                <input type="hidden" asp-for="Nombre" />
             </div>
 
+            <!-- Fechas -->
             <div class="row">
                 <div class="col-md-6 mb-3">
                     <label asp-for="FechaInicio" class="form-label"></label>
-                    <input asp-for="FechaInicio" class="form-control" type="date" />
-                    <span asp-validation-for="FechaInicio" class="text-danger"></span>
+                    <input class="form-control" type="date" value="@Model.FechaInicio.ToString("yyyy-MM-dd")" disabled />
+                    <input type="hidden" asp-for="FechaInicio" />
                 </div>
                 <div class="col-md-6 mb-3">
                     <label asp-for="FechaFin" class="form-label"></label>
-                    <input asp-for="FechaFin" class="form-control" type="date" />
-                    <span asp-validation-for="FechaFin" class="text-danger"></span>
+                    <input class="form-control" type="date" value="@Model.FechaFin.ToString("yyyy-MM-dd")" disabled />
+                    <input type="hidden" asp-for="FechaFin" />
                 </div>
             </div>
 
+            <!-- Descripción -->
             <div class="mb-3">
                 <label asp-for="Descripcion" class="form-label"></label>
-                <textarea asp-for="Descripcion" class="form-control" rows="3" placeholder="Descripción del proyecto"></textarea>
-                <span asp-validation-for="Descripcion" class="text-danger"></span>
+                <textarea class="form-control" rows="3" disabled>@Model.Descripcion</textarea>
+                <input type="hidden" asp-for="Descripcion" />
             </div>
 
+            <!-- Fotos -->
             <div class="mb-3">
                 <label asp-for="Fotos" class="form-label"></label>
-                <input asp-for="Fotos" class="form-control" placeholder="URL de la(s) foto(s)" />
-                <span asp-validation-for="Fotos" class="text-danger"></span>
+                <input class="form-control" value="@Model.Fotos" disabled />
+                <input type="hidden" asp-for="Fotos" />
             </div>
 
+            <!-- Usuario -->
             <div class="mb-3">
                 <label asp-for="UsuarioID" class="form-label"></label>
-                <select asp-for="UsuarioID" class="form-select" asp-items="ViewBag.UsuarioID">
-                    <option value="">-- Seleccione un usuario --</option>
+                <select class="form-select" disabled>
+                    <option selected>@ViewBag.NombreUsuario</option>
                 </select>
-                <span asp-validation-for="UsuarioID" class="text-danger"></span>
+                <input type="hidden" asp-for="UsuarioID" />
             </div>
 
+            <!-- Requiere documentos -->
             <div class="form-check mb-3">
                 <input class="form-check-input" asp-for="RequiereDocumentos" />
                 <label class="form-check-label" asp-for="RequiereDocumentos">
                     ¿Requiere documentos de instalación?
                 </label>
             </div>
-           
+
+
+            <!-- Estado editable -->
             <div class="mb-3">
                 <label asp-for="estado" class="form-label"></label>
                 <select asp-for="estado" class="form-select">
@@ -70,6 +78,7 @@
                 </select>
                 <span asp-validation-for="estado" class="text-danger"></span>
             </div>
+
             <button type="submit" class="btn btn-primary">Guardar</button>
             <a asp-action="Index" class="btn btn-secondary ms-2">Volver al listado</a>
         </form>
@@ -77,5 +86,7 @@
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }
