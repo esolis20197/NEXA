@@ -13,7 +13,7 @@ namespace NEXA.Controllers
         {
             private readonly NEXAContext _context;
             private readonly IWebHostEnvironment _env;
-        private readonly EmailService _emailService;
+            private readonly EmailService _emailService;
 
         public PermisosInstalacionController(NEXAContext context, IWebHostEnvironment env, EmailService emailService)
         {
@@ -57,6 +57,40 @@ namespace NEXA.Controllers
                 return BadRequest("Archivo inválido");
             }
 
+        private async Task EnviarCorreoEstado(PermisoInstalacion permiso, string estado, string motivo = null)
+        {
+            var usuario = permiso.Proyecto.Usuario;
+            if (usuario == null) return;
+
+            string asunto = estado == "Aprobado" ? "Documento aprobado" : "Documento rechazado";
+
+            string contenidoHtml = string.Empty;
+
+            if (estado == "Rechazado")
+            {
+                contenidoHtml = $@"
+                <p>El documento {permiso.NombreArchivo} fue <span style='color:red;'>rechazado</span> para el proyecto {permiso.Proyecto.Nombre}.</p>
+                <br>
+                <p>Motivo: {motivo}</p>
+                <br>
+                <p>Por favor, realiza las correcciones necesarias y vuelve a subir los documentos cuando estén listos.</p>";
+            }
+            else if (estado == "Aprobado")
+            {
+                contenidoHtml = $@"
+                <p>El documento {permiso.NombreArchivo} fue <span style='color:green;'>aprobado</span> para el proyecto {permiso.Proyecto.Nombre}.</p>
+                <br><p>Gracias por subir correctamente la documentación requerida.</p>";
+            }
+
+            string html = await _emailService.LeerPlantillaEmailAsync("EmailDocsEstado.html");
+
+            html = html.Replace("{{nombre}}", usuario.NombreCompleto)
+                       .Replace("{{contenido}}", contenidoHtml);
+
+            await _emailService.EnviarCorreoAsync(usuario.Correo, asunto, html);
+        }
+
+
         [HttpPost]
         public async Task<IActionResult> Aprobar(int id)
         {
@@ -70,14 +104,7 @@ namespace NEXA.Controllers
             permiso.Estado = "Aprobado";
             await _context.SaveChangesAsync();
 
-            // Enviar correo
-            var usuario = permiso.Proyecto.Usuario;
-            if (usuario != null)
-            {
-                string asunto = "Documento aprobado";
-                string cuerpo = $"Hola {usuario.NombreCompleto},<br/>El documento <strong>{permiso.NombreArchivo}</strong> fue <strong>aprobado</strong> para el proyecto <strong>{permiso.Proyecto.Nombre}</strong>.";
-                await _emailService.EnviarCorreoAsync(usuario.Correo, asunto, cuerpo);
-            }
+            await EnviarCorreoEstado(permiso, "Aprobado");
 
             return RedirectToAction("Details", "Proyecto", new { id = permiso.ProyectoID });
         }
@@ -95,22 +122,11 @@ namespace NEXA.Controllers
             permiso.Estado = "Rechazado";
             await _context.SaveChangesAsync();
 
-            // Enviar correo
-            var usuario = permiso.Proyecto.Usuario;
-            if (usuario != null)
-            {
-                string asunto = "Documento rechazado";
-                string cuerpo = $@"
-            Hola {usuario.NombreCompleto},<br/>
-            El documento <strong>{permiso.NombreArchivo}</strong> fue <strong>rechazado</strong> para el proyecto <strong>{permiso.Proyecto.Nombre}</strong>.<br/>
-            <strong>Motivo:</strong> {motivo}<br/><br/>
-            Por favor, suba uno nuevo.";
-
-                await _emailService.EnviarCorreoAsync(usuario.Correo, asunto, cuerpo);
-            }
+            await EnviarCorreoEstado(permiso, "Rechazado", motivo);
 
             return RedirectToAction("Details", "Proyecto", new { id = permiso.ProyectoID });
         }
+
 
     }
 }

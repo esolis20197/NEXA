@@ -61,20 +61,30 @@ namespace NEXA.Controllers
             return View();
         }
 
-        // Muestra solo pendientes por defecto
-        public async Task<IActionResult> Historial(string estado = "Pendiente")
-        {
-            var pedidos = await _context.Pedidos
+        // Muestra todas por defecto
+        public async Task<IActionResult> Historial(string estado = null)
+        {            
+            ViewBag.EstadoSeleccionado = estado;
+
+            IQueryable<Pedido> pedidosQuery = _context.Pedidos
                 .Include(p => p.Usuario)
                 .Include(p => p.Detalles)
-                    .ThenInclude(d => d.Inventario)
-                .Where(p => p.Estado == estado)
+                    .ThenInclude(d => d.Inventario);
+
+            // Si se especifica estado, filtramos por ese estado
+            if (!string.IsNullOrEmpty(estado))
+            {
+                pedidosQuery = pedidosQuery.Where(p => p.Estado == estado);
+            }
+
+            var pedidos = await pedidosQuery
                 .OrderBy(p => p.FechaPedido)
                 .ToListAsync();
 
-            ViewBag.EstadoSeleccionado = estado;
             return View(pedidos);
         }
+
+
 
         public async Task<IActionResult> Ver(int id)
         {
@@ -98,7 +108,7 @@ namespace NEXA.Controllers
             pedido.Estado = "Completado";
             await _context.SaveChangesAsync();
 
-            return RedirectToAction("Historial", new { estado = "Pendiente" });
+            return RedirectToAction("Historial");
         }
 
         [HttpPost]
@@ -119,7 +129,7 @@ namespace NEXA.Controllers
             }
 
             await _context.SaveChangesAsync();
-            return RedirectToAction("Historial", new { estado = "Pendiente" });
+            return RedirectToAction("Historial");
 
         }
     }

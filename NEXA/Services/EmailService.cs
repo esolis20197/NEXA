@@ -34,5 +34,15 @@ namespace NEXA.Services
 
             await smtp.SendMailAsync(mensaje);
         }
+
+        public async Task<string> LeerPlantillaEmailAsync(string nombreArchivo)
+        {
+            var ruta = Path.Combine(Directory.GetCurrentDirectory(), "Templates", nombreArchivo);
+            if (!File.Exists(ruta))
+                throw new FileNotFoundException($"Plantilla no encontrada: {ruta}");
+
+            return await File.ReadAllTextAsync(ruta);
+        }
+
     }
 }

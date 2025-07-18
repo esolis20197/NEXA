@@ -176,32 +176,15 @@ namespace NEXA.Controllers
             _context.PasswordResetTokens.Add(tokenRegistro);
             await _context.SaveChangesAsync();
 
-            var cuerpo = $@"
-            <div style='font-family: Arial, sans-serif; color: #333;'>
-                <h2 style='color: #2E86C1;'>Hola {usuario.NombreCompleto},</h2>
-                <p>Has solicitado restablecer tu contraseña.</p>
-                <p>Tu código de verificación es:</p>
-                <div style='
-                    background-color: #f0f4f8;
-                    border: 2px solid #2E86C1;
-                    border-radius: 8px;
-                    padding: 20px;
-                    font-size: 28px;
-                    font-weight: bold;
-                    text-align: center;
-                    letter-spacing: 6px;
-                    width: fit-content;
-                    margin: 20px auto;
-                    color: #2E86C1;
-                    '>{token}</div>
-                <p>Ingresa este código en la página para continuar con el restablecimiento de tu contraseña.</p>
-                <p style='font-size: 0.9em; color: #555;'>Este código expirará en 15 minutos.</p>
-                <hr style='border: none; border-top: 1px solid #ddd; margin: 30px 0;' />
-                <p style='font-size: 0.8em; color: #999;'>Si no solicitaste este cambio, puedes ignorar este correo.</p>
-            </div>";
-
             var emailService = HttpContext.RequestServices.GetRequiredService<EmailService>();
-            await emailService.EnviarCorreoAsync(usuario.Correo, "Recuperación de contraseña", cuerpo);
+
+            // Leer plantilla y personalizar            
+            string html = await emailService.LeerPlantillaEmailAsync("EmailRecuperarContrasena.html");
+
+            html = html.Replace("{{nombre}}", usuario.NombreCompleto)
+                       .Replace("{{contenido}}", token);
+            // Enviar correo
+            await emailService.EnviarCorreoAsync(usuario.Correo, "Recuperación de contraseña", html);
 
             TempData["CorreoRecuperacion"] = correo;
             return RedirectToAction("ValidarToken");
