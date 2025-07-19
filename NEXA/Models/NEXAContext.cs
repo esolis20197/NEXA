@@ -20,7 +20,7 @@ namespace NEXA.Models
         public DbSet<Citas> Citas { get; set; }
 
         public DbSet<PermisoInstalacion> PermisosInstalacion { get; set; }
-
+        public DbSet<ReporteHistorial> ReporteHistoriales { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
