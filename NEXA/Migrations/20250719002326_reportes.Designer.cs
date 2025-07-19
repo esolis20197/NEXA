@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NEXA.Models;
 
@@ -11,9 +12,11 @@ using NEXA.Models;
 namespace NEXA.Migrations
 {
     [DbContext(typeof(NEXAContext))]
-    partial class NEXAContextModelSnapshot : ModelSnapshot
+    [Migration("20250719002326_reportes")]
+    partial class reportes
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -121,89 +124,6 @@ namespace NEXA.Migrations
                         .HasFilter("[UsuarioID] IS NOT NULL");
 
                     b.ToTable("Citas");
-                });
-
-            modelBuilder.Entity("NEXA.Models.ClientesPorGrupo", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("ClienteId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("GrupoId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ClienteId");
-
-                    b.HasIndex("GrupoId");
-
-                    b.ToTable("ClientesPorGrupos");
-                });
-
-            modelBuilder.Entity("NEXA.Models.CorreosPromocional", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Asunto")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("Contenido")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Estado")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("FechaEnvio")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("GrupoId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("UsuarioId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("GrupoId");
-
-                    b.HasIndex("UsuarioId");
-
-                    b.ToTable("CorreosPromocionales");
-                });
-
-            modelBuilder.Entity("NEXA.Models.GrupoCliente", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Descripcion")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("NombreGrupo")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("GrupoClientes");
                 });
 
             modelBuilder.Entity("NEXA.Models.Inventario", b =>
@@ -500,44 +420,6 @@ namespace NEXA.Migrations
                     b.Navigation("Usuario");
                 });
 
-            modelBuilder.Entity("NEXA.Models.ClientesPorGrupo", b =>
-                {
-                    b.HasOne("NEXA.Models.Usuario", "Usuario")
-                        .WithMany("ClientesPorGrupo")
-                        .HasForeignKey("ClienteId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("NEXA.Models.GrupoCliente", "GrupoCliente")
-                        .WithMany("ClientesPorGrupo")
-                        .HasForeignKey("GrupoId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("GrupoCliente");
-
-                    b.Navigation("Usuario");
-                });
-
-            modelBuilder.Entity("NEXA.Models.CorreosPromocional", b =>
-                {
-                    b.HasOne("NEXA.Models.GrupoCliente", "GrupoCliente")
-                        .WithMany("CorreosPromocionales")
-                        .HasForeignKey("GrupoId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("NEXA.Models.Usuario", "Usuario")
-                        .WithMany("CorreosPromocionales")
-                        .HasForeignKey("UsuarioId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("GrupoCliente");
-
-                    b.Navigation("Usuario");
-                });
-
             modelBuilder.Entity("NEXA.Models.PasswordResetToken", b =>
                 {
                     b.HasOne("NEXA.Models.Usuario", "Usuario")
@@ -606,13 +488,6 @@ namespace NEXA.Migrations
                     b.Navigation("Detalles");
                 });
 
-            modelBuilder.Entity("NEXA.Models.GrupoCliente", b =>
-                {
-                    b.Navigation("ClientesPorGrupo");
-
-                    b.Navigation("CorreosPromocionales");
-                });
-
             modelBuilder.Entity("NEXA.Models.Pedido", b =>
                 {
                     b.Navigation("Detalles");
@@ -626,10 +501,6 @@ namespace NEXA.Migrations
             modelBuilder.Entity("NEXA.Models.Usuario", b =>
                 {
                     b.Navigation("Citas");
-
-                    b.Navigation("ClientesPorGrupo");
-
-                    b.Navigation("CorreosPromocionales");
 
                     b.Navigation("Proyectos");
                 });

@@ -19,9 +19,12 @@ namespace NEXA.Models
         public DbSet<Citas> Citas { get; set; }
 
         public DbSet<PermisoInstalacion> PermisosInstalacion { get; set; }
+
         public DbSet<CorreosPromocional> CorreosPromocionales { get; set; }
         public DbSet<GrupoCliente> GrupoClientes { get; set; }
         public DbSet<ClientesPorGrupo> ClientesPorGrupos { get; set; }
+
+        public DbSet<ReporteHistorial> ReporteHistoriales { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
