@@ -17,6 +17,8 @@ namespace NEXA.Models
 
         public ICollection<Proyecto>? Proyectos { get; set; }
         public ICollection<Citas>? Citas { get; set; }
+        public ICollection<CorreosPromocional> CorreosPromocionales { get; set; }
+        public ICollection<ClientesPorGrupo> ClientesPorGrupo { get; set; }
 
     }
 }

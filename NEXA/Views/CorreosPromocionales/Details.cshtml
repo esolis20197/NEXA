@@ -1,0 +1,59 @@
+﻿@model NEXA.Models.CorreosPromocional
+@using Microsoft.AspNetCore.Http
+
+@{
+    var usuarioRol = Context.Session.GetString("UsuarioRol");
+    ViewData["Title"] = "Detalles del Correo Promocional";
+}
+
+<div class="container py-4">
+    <div class="card shadow-sm p-4">
+        <h4 class="text-center mb-4">@ViewData["Title"]</h4>
+        <hr />
+        <div class="row">
+            <div class="col-md-12">
+                <dl class="row">
+                    <dt class="col-sm-3 fw-semibold">Asunto</dt>
+                    <dd class="col-sm-9">@Model.Asunto</dd>
+
+                    <dt class="col-sm-3 fw-semibold">Contenido</dt>
+                    <dd class="col-sm-9" style="white-space: pre-wrap;">@Model.Contenido</dd>
+
+                    <dt class="col-sm-3 fw-semibold">Grupo de Clientes</dt>
+                    <dd class="col-sm-9">@Model.GrupoCliente.NombreGrupo</dd>
+
+                    <dt class="col-sm-3">Fecha de Envío</dt>
+                    <dd class="col-sm-9">@Model.FechaEnvio.ToLocalTime().ToString("f")</dd>
+
+                    <dt class="col-sm-3 fw-semibold">Estado</dt>
+                    <dd class="col-sm-9">
+                        @switch (Model.Estado)
+                        {
+                            case "Pendiente":
+                                <span class="badge bg-warning text-dark">Pendiente</span>
+                                break;
+                            case "Enviado":
+                                <span class="badge bg-success">Enviado</span>
+                                break;
+                            case "Cancelado":
+                                <span class="badge bg-danger">Cancelado</span>
+                                break;
+                            default:
+                                <span class="badge bg-secondary">@Model.Estado</span>
+                                break;
+                        }
+                    </dd>
+                </dl>
+            </div>
+        </div>
+
+        <div class="mt-4">
+            @* Mostrar botones según rol de usuario *@
+            @if (usuarioRol == "Administrador" || usuarioRol == "Empleado")
+            {
+                <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary me-2">Editar</a>
+            }
+            <a asp-action="Index" class="btn btn-secondary">Volver al listado</a>
+        </div>
+    </div>
+</div>

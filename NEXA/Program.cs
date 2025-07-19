@@ -28,6 +28,9 @@ builder.Services.AddHttpClient<GometaApiService>();
 // Agregar servicios para controladores y vistas
 builder.Services.AddControllersWithViews();
 
+builder.Services.AddScoped<CorreoPromocionalJobService>();
+builder.Services.AddHostedService<CorreoPromocionalBackgroundService>();
+
 var app = builder.Build();
 
 // Configuración del pipeline de solicitudes HTTP
