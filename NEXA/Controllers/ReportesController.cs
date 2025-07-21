@@ -110,15 +110,36 @@ namespace NEXA.Controllers
             using var workbook = new XLWorkbook();
             var ws = workbook.Worksheets.Add("Inventario");
 
-            // Cabecera
-            ws.Cell(1, 1).Value = "Nombre";
-            ws.Cell(1, 2).Value = "Descripción";
-            ws.Cell(1, 3).Value = "Precio";
-            ws.Cell(1, 4).Value = "Stock";
-            ws.Cell(1, 5).Value = "Tipo";
-            FormatearCabeceraExcel(ws, 1, 5);
+            // ACA PUSE EL TITULO NEXA EN GRANDE
+            var rangoTitulo = ws.Range(1, 1, 1, 5);
+            rangoTitulo.Merge();
+            rangoTitulo.Value = "NEXA";
+            rangoTitulo.Style.Font.Bold = true;
+            rangoTitulo.Style.Font.FontSize = 28;
+            rangoTitulo.Style.Font.FontColor = XLColor.White;
+            rangoTitulo.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+            rangoTitulo.Style.Alignment.Vertical = XLAlignmentVerticalValues.Center;
+            rangoTitulo.Style.Fill.BackgroundColor = XLColor.FromArgb(0, 70, 127); // Azul oscuro
+            rangoTitulo.Style.Border.OutsideBorder = XLBorderStyleValues.Thick;
+            rangoTitulo.Style.Border.OutsideBorderColor = XLColor.Black;
+            ws.Row(1).Height = 40;
 
-            int row = 2;
+            // Cabecera con estilo
+            ws.Cell(2, 1).Value = "Nombre";
+            ws.Cell(2, 2).Value = "Descripción";
+            ws.Cell(2, 3).Value = "Precio";
+            ws.Cell(2, 4).Value = "Stock";
+            ws.Cell(2, 5).Value = "Tipo";
+
+            var rangoCabecera = ws.Range(2, 1, 2, 5);
+            rangoCabecera.Style.Font.Bold = true;
+            rangoCabecera.Style.Font.FontColor = XLColor.White;
+            rangoCabecera.Style.Fill.BackgroundColor = XLColor.FromArgb(0, 112, 192);
+            rangoCabecera.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+            rangoCabecera.Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
+            rangoCabecera.Style.Border.OutsideBorderColor = XLColor.Black;
+
+            int row = 3;
             foreach (var item in datos)
             {
                 ws.Cell(row, 1).Value = item.Nombre;
@@ -148,33 +169,65 @@ namespace NEXA.Controllers
             PdfWriter.GetInstance(doc, stream);
             doc.Open();
 
+            // Título NEXA grande con fondo azul y texto blanco
+            var tablaTitulo = new PdfPTable(1)
+            {
+                WidthPercentage = 100,
+                SpacingAfter = 15
+            };
+            var celdaTitulo = new PdfPCell(new Phrase("NEXA", FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 36, BaseColor.WHITE)))
+            {
+                HorizontalAlignment = Element.ALIGN_CENTER,
+                VerticalAlignment = Element.ALIGN_MIDDLE,
+                BackgroundColor = new BaseColor(0, 70, 127),
+                Border = PdfPCell.NO_BORDER,
+                FixedHeight = 50
+            };
+            tablaTitulo.AddCell(celdaTitulo);
+            doc.Add(tablaTitulo);
+
+            // Subtítulo con color gris oscuro
             var titulo = new Paragraph("Reporte de Inventario")
             {
                 Alignment = Element.ALIGN_CENTER,
-                SpacingAfter = 10,
-                Font = FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 16)
+                SpacingAfter = 15,
+                Font = FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 18, BaseColor.DARK_GRAY)
             };
             doc.Add(titulo);
 
+            // Fecha en cursiva y gris
             var fecha = new Paragraph($"Fecha: {DateTime.Now:yyyy-MM-dd HH:mm}")
             {
                 Alignment = Element.ALIGN_RIGHT,
-                SpacingAfter = 15
+                SpacingAfter = 15,
+                Font = FontFactory.GetFont(FontFactory.HELVETICA_OBLIQUE, 10, BaseColor.GRAY)
             };
             doc.Add(fecha);
 
             var table = CrearTablaPdf(new[] { "Nombre", "Descripción", "Precio", "Stock", "Tipo" });
 
+            //Estilo en la cabecera 
+            for (int i = 0; i < 5; i++)
+            {
+                var cell = table.GetRow(0).GetCells()[i];
+                cell.BackgroundColor = new BaseColor(0, 70, 127);
+                cell.Phrase.Font.Color = BaseColor.WHITE;
+                cell.HorizontalAlignment = Element.ALIGN_CENTER;
+                cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                cell.Padding = 5f;
+                cell.BorderWidth = 1.5f;
+            }
+
             foreach (var item in datos)
             {
                 var cells = new[]
                 {
-                    new PdfPCell(new Phrase(item.Nombre)),
-                    new PdfPCell(new Phrase(item.Descripcion)),
-                    new PdfPCell(new Phrase(item.Precio.ToString("C2"))),
-                    new PdfPCell(new Phrase(item.Stock.ToString())),
-                    new PdfPCell(new Phrase(item.tipo))
-                };
+            new PdfPCell(new Phrase(item.Nombre)),
+            new PdfPCell(new Phrase(item.Descripcion)),
+            new PdfPCell(new Phrase(item.Precio.ToString("C2"))),
+            new PdfPCell(new Phrase(item.Stock.ToString())),
+            new PdfPCell(new Phrase(item.tipo))
+        };
                 foreach (var cell in cells) AplicarEstiloCeldaNormal(cell);
                 foreach (var cell in cells) table.AddCell(cell);
             }
@@ -197,14 +250,36 @@ namespace NEXA.Controllers
             using var workbook = new XLWorkbook();
             var ws = workbook.Worksheets.Add("Usuarios Empleados");
 
-            ws.Cell(1, 1).Value = "Nombre de Usuario";
-            ws.Cell(1, 2).Value = "Nombre Completo";
-            ws.Cell(1, 3).Value = "Correo";
-            ws.Cell(1, 4).Value = "Cédula";
-            ws.Cell(1, 5).Value = "Teléfono";
-            FormatearCabeceraExcel(ws, 1, 5);
+            // Título "NEXA" en grande con estilo
+            var rangoTitulo = ws.Range(1, 1, 1, 5);
+            rangoTitulo.Merge();
+            rangoTitulo.Value = "NEXA";
+            rangoTitulo.Style.Font.Bold = true;
+            rangoTitulo.Style.Font.FontSize = 28;
+            rangoTitulo.Style.Font.FontColor = XLColor.White;
+            rangoTitulo.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+            rangoTitulo.Style.Alignment.Vertical = XLAlignmentVerticalValues.Center;
+            rangoTitulo.Style.Fill.BackgroundColor = XLColor.FromArgb(0, 70, 127); // Azul oscuro
+            rangoTitulo.Style.Border.OutsideBorder = XLBorderStyleValues.Thick;
+            rangoTitulo.Style.Border.OutsideBorderColor = XLColor.Black;
+            ws.Row(1).Height = 40;
 
-            int row = 2;
+            // Cabecera con estilo
+            ws.Cell(2, 1).Value = "Nombre de Usuario";
+            ws.Cell(2, 2).Value = "Nombre Completo";
+            ws.Cell(2, 3).Value = "Correo";
+            ws.Cell(2, 4).Value = "Cédula";
+            ws.Cell(2, 5).Value = "Teléfono";
+
+            var rangoCabecera = ws.Range(2, 1, 2, 5);
+            rangoCabecera.Style.Font.Bold = true;
+            rangoCabecera.Style.Font.FontColor = XLColor.White;
+            rangoCabecera.Style.Fill.BackgroundColor = XLColor.FromArgb(0, 112, 192);
+            rangoCabecera.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+            rangoCabecera.Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
+            rangoCabecera.Style.Border.OutsideBorderColor = XLColor.Black;
+
+            int row = 3;
             foreach (var u in datos)
             {
                 ws.Cell(row, 1).Value = u.NombreUsuario;
@@ -234,33 +309,65 @@ namespace NEXA.Controllers
             PdfWriter.GetInstance(doc, stream);
             doc.Open();
 
+            // Título NEXA grande con fondo azul y texto blanco
+            var tablaTitulo = new PdfPTable(1)
+            {
+                WidthPercentage = 100,
+                SpacingAfter = 15
+            };
+            var celdaTitulo = new PdfPCell(new Phrase("NEXA", FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 36, BaseColor.WHITE)))
+            {
+                HorizontalAlignment = Element.ALIGN_CENTER,
+                VerticalAlignment = Element.ALIGN_MIDDLE,
+                BackgroundColor = new BaseColor(0, 70, 127),
+                Border = PdfPCell.NO_BORDER,
+                FixedHeight = 50
+            };
+            tablaTitulo.AddCell(celdaTitulo);
+            doc.Add(tablaTitulo);
+
+            // Subtítulo con color gris oscuro
             var titulo = new Paragraph("Reporte de Usuarios Empleados")
             {
                 Alignment = Element.ALIGN_CENTER,
-                SpacingAfter = 10,
-                Font = FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 16)
+                SpacingAfter = 15,
+                Font = FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 18, BaseColor.DARK_GRAY)
             };
             doc.Add(titulo);
 
+            // Fecha en cursiva y gris
             var fecha = new Paragraph($"Fecha: {DateTime.Now:yyyy-MM-dd HH:mm}")
             {
                 Alignment = Element.ALIGN_RIGHT,
-                SpacingAfter = 15
+                SpacingAfter = 15,
+                Font = FontFactory.GetFont(FontFactory.HELVETICA_OBLIQUE, 10, BaseColor.GRAY)
             };
             doc.Add(fecha);
 
             var table = CrearTablaPdf(new[] { "Nombre de Usuario", "Nombre Completo", "Correo", "Cédula", "Teléfono" });
 
+            // Aplicar estilo cabecera tabla (fondo azul oscuro, texto blanco)
+            for (int i = 0; i < 5; i++)
+            {
+                var cell = table.GetRow(0).GetCells()[i];
+                cell.BackgroundColor = new BaseColor(0, 70, 127);
+                cell.Phrase.Font.Color = BaseColor.WHITE;
+                cell.HorizontalAlignment = Element.ALIGN_CENTER;
+                cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                cell.Padding = 5f;
+                cell.BorderWidth = 1.5f;
+            }
+
             foreach (var u in datos)
             {
                 var cells = new[]
                 {
-                    new PdfPCell(new Phrase(u.NombreUsuario)),
-                    new PdfPCell(new Phrase(u.NombreCompleto)),
-                    new PdfPCell(new Phrase(u.Correo)),
-                    new PdfPCell(new Phrase(u.Cedula)),
-                    new PdfPCell(new Phrase(u.Telefono))
-                };
+            new PdfPCell(new Phrase(u.NombreUsuario)),
+            new PdfPCell(new Phrase(u.NombreCompleto)),
+            new PdfPCell(new Phrase(u.Correo)),
+            new PdfPCell(new Phrase(u.Cedula)),
+            new PdfPCell(new Phrase(u.Telefono))
+        };
                 foreach (var cell in cells) AplicarEstiloCeldaNormal(cell);
                 foreach (var cell in cells) table.AddCell(cell);
             }
@@ -295,16 +402,38 @@ namespace NEXA.Controllers
             using var workbook = new XLWorkbook();
             var ws = workbook.Worksheets.Add("Pedidos");
 
-            ws.Cell(1, 1).Value = "ID Pedido";
-            ws.Cell(1, 2).Value = "Usuario";
-            ws.Cell(1, 3).Value = "Fecha Pedido";
-            ws.Cell(1, 4).Value = "Estado";
-            ws.Cell(1, 5).Value = "Producto";
-            ws.Cell(1, 6).Value = "Cantidad";
-            ws.Cell(1, 7).Value = "Precio Unitario";
-            FormatearCabeceraExcel(ws, 1, 7);
+            // Título "NEXA" en grande con estilo
+            var rangoTitulo = ws.Range(1, 1, 1, 7);
+            rangoTitulo.Merge();
+            rangoTitulo.Value = "NEXA";
+            rangoTitulo.Style.Font.Bold = true;
+            rangoTitulo.Style.Font.FontSize = 28;
+            rangoTitulo.Style.Font.FontColor = XLColor.White;
+            rangoTitulo.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+            rangoTitulo.Style.Alignment.Vertical = XLAlignmentVerticalValues.Center;
+            rangoTitulo.Style.Fill.BackgroundColor = XLColor.FromArgb(0, 70, 127); // Azul oscuro
+            rangoTitulo.Style.Border.OutsideBorder = XLBorderStyleValues.Thick;
+            rangoTitulo.Style.Border.OutsideBorderColor = XLColor.Black;
+            ws.Row(1).Height = 40;
 
-            int row = 2;
+            // Cabecera con estilo
+            ws.Cell(2, 1).Value = "ID Pedido";
+            ws.Cell(2, 2).Value = "Usuario";
+            ws.Cell(2, 3).Value = "Fecha Pedido";
+            ws.Cell(2, 4).Value = "Estado";
+            ws.Cell(2, 5).Value = "Producto";
+            ws.Cell(2, 6).Value = "Cantidad";
+            ws.Cell(2, 7).Value = "Precio Unitario";
+
+            var rangoCabecera = ws.Range(2, 1, 2, 7);
+            rangoCabecera.Style.Font.Bold = true;
+            rangoCabecera.Style.Font.FontColor = XLColor.White;
+            rangoCabecera.Style.Fill.BackgroundColor = XLColor.FromArgb(0, 112, 192);
+            rangoCabecera.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+            rangoCabecera.Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
+            rangoCabecera.Style.Border.OutsideBorderColor = XLColor.Black;
+
+            int row = 3;
             foreach (var p in lista)
             {
                 if (p.Detalles != null && p.Detalles.Any())
@@ -365,24 +494,56 @@ namespace NEXA.Controllers
             PdfWriter.GetInstance(doc, stream);
             doc.Open();
 
+            // Título NEXA grande con texto blanco y fondo azul (tabla con 1 celda)
+            var tablaTitulo = new PdfPTable(1)
+            {
+                WidthPercentage = 100,
+                SpacingAfter = 15
+            };
+            var celdaTitulo = new PdfPCell(new Phrase("NEXA", FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 36, BaseColor.WHITE)))
+            {
+                HorizontalAlignment = Element.ALIGN_CENTER,
+                VerticalAlignment = Element.ALIGN_MIDDLE,
+                BackgroundColor = new BaseColor(0, 70, 127),
+                Border = PdfPCell.NO_BORDER,
+                FixedHeight = 50
+            };
+            tablaTitulo.AddCell(celdaTitulo);
+            doc.Add(tablaTitulo);
+
+            // Subtítulo con color gris oscuro
             var titulo = new Paragraph("Reporte de Pedidos con Detalles")
             {
                 Alignment = Element.ALIGN_CENTER,
-                SpacingAfter = 10,
-                Font = FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 16)
+                SpacingAfter = 15,
+                Font = FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 18, BaseColor.DARK_GRAY)
             };
             doc.Add(titulo);
 
+            // Fecha en cursiva y gris
             var fecha = new Paragraph($"Fecha: {DateTime.Now:yyyy-MM-dd HH:mm}")
             {
                 Alignment = Element.ALIGN_RIGHT,
-                SpacingAfter = 15
+                SpacingAfter = 15,
+                Font = FontFactory.GetFont(FontFactory.HELVETICA_OBLIQUE, 10, BaseColor.GRAY)
             };
             doc.Add(fecha);
 
             var table = CrearTablaPdf(
                 new[] { "ID Pedido", "Usuario", "Fecha Pedido", "Estado", "Producto", "Cantidad", "Precio Unitario" },
                 new float[] { 7f, 20f, 12f, 12f, 25f, 8f, 12f });
+
+            // Aplicar estilo cabecera tabla (fondo azul oscuro, texto blanco)
+            for (int i = 0; i < 7; i++)
+            {
+                var cell = table.GetRow(0).GetCells()[i];
+                cell.BackgroundColor = new BaseColor(0, 70, 127);
+                cell.Phrase.Font.Color = BaseColor.WHITE;
+                cell.HorizontalAlignment = Element.ALIGN_CENTER;
+                cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                cell.Padding = 5f;
+                cell.BorderWidth = 1.5f;
+            }
 
             foreach (var p in lista)
             {
@@ -392,14 +553,14 @@ namespace NEXA.Controllers
                     {
                         var cells = new[]
                         {
-                            new PdfPCell(new Phrase(p.Id.ToString())),
-                            new PdfPCell(new Phrase(p.Usuario?.NombreCompleto ?? "N/A")),
-                            new PdfPCell(new Phrase(p.FechaPedido.ToString("yyyy-MM-dd"))),
-                            new PdfPCell(new Phrase(p.Estado)),
-                            new PdfPCell(new Phrase(d.Inventario?.Nombre ?? "N/A")),
-                            new PdfPCell(new Phrase(d.Cantidad.ToString())),
-                            new PdfPCell(new Phrase(d.PrecioUnitario.ToString("C2")))
-                        };
+                    new PdfPCell(new Phrase(p.Id.ToString())),
+                    new PdfPCell(new Phrase(p.Usuario?.NombreCompleto ?? "N/A")),
+                    new PdfPCell(new Phrase(p.FechaPedido.ToString("yyyy-MM-dd"))),
+                    new PdfPCell(new Phrase(p.Estado)),
+                    new PdfPCell(new Phrase(d.Inventario?.Nombre ?? "N/A")),
+                    new PdfPCell(new Phrase(d.Cantidad.ToString())),
+                    new PdfPCell(new Phrase(d.PrecioUnitario.ToString("C2")))
+                };
                         foreach (var cell in cells) AplicarEstiloCeldaNormal(cell);
                         foreach (var cell in cells) table.AddCell(cell);
                     }
@@ -408,14 +569,14 @@ namespace NEXA.Controllers
                 {
                     var cells = new[]
                     {
-                        new PdfPCell(new Phrase(p.Id.ToString())),
-                        new PdfPCell(new Phrase(p.Usuario?.NombreCompleto ?? "N/A")),
-                        new PdfPCell(new Phrase(p.FechaPedido.ToString("yyyy-MM-dd"))),
-                        new PdfPCell(new Phrase(p.Estado)),
-                        new PdfPCell(new Phrase("-")),
-                        new PdfPCell(new Phrase("-")),
-                        new PdfPCell(new Phrase("-"))
-                    };
+                new PdfPCell(new Phrase(p.Id.ToString())),
+                new PdfPCell(new Phrase(p.Usuario?.NombreCompleto ?? "N/A")),
+                new PdfPCell(new Phrase(p.FechaPedido.ToString("yyyy-MM-dd"))),
+                new PdfPCell(new Phrase(p.Estado)),
+                new PdfPCell(new Phrase("-")),
+                new PdfPCell(new Phrase("-")),
+                new PdfPCell(new Phrase("-"))
+            };
                     foreach (var cell in cells) AplicarEstiloCeldaNormal(cell);
                     foreach (var cell in cells) table.AddCell(cell);
                 }
@@ -447,14 +608,36 @@ namespace NEXA.Controllers
             using var workbook = new XLWorkbook();
             var ws = workbook.Worksheets.Add("Citas");
 
-            ws.Cell(1, 1).Value = "Nombre Cita";
-            ws.Cell(1, 2).Value = "Tipo Cita";
-            ws.Cell(1, 3).Value = "Fecha Cita";
-            ws.Cell(1, 4).Value = "Encargado";
-            ws.Cell(1, 5).Value = "Estado";
-            FormatearCabeceraExcel(ws, 1, 5);
+            // Título "NEXA" en grande con estilo
+            var rangoTitulo = ws.Range(1, 1, 1, 5);
+            rangoTitulo.Merge();
+            rangoTitulo.Value = "NEXA";
+            rangoTitulo.Style.Font.Bold = true;
+            rangoTitulo.Style.Font.FontSize = 28;
+            rangoTitulo.Style.Font.FontColor = XLColor.White;
+            rangoTitulo.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+            rangoTitulo.Style.Alignment.Vertical = XLAlignmentVerticalValues.Center;
+            rangoTitulo.Style.Fill.BackgroundColor = XLColor.FromArgb(0, 70, 127); // Azul oscuro
+            rangoTitulo.Style.Border.OutsideBorder = XLBorderStyleValues.Thick;
+            rangoTitulo.Style.Border.OutsideBorderColor = XLColor.Black;
+            ws.Row(1).Height = 40;
 
-            int row = 2;
+            // Cabecera con estilo
+            ws.Cell(2, 1).Value = "Nombre Cita";
+            ws.Cell(2, 2).Value = "Tipo Cita";
+            ws.Cell(2, 3).Value = "Fecha Cita";
+            ws.Cell(2, 4).Value = "Encargado";
+            ws.Cell(2, 5).Value = "Estado";
+
+            var rangoCabecera = ws.Range(2, 1, 2, 5);
+            rangoCabecera.Style.Font.Bold = true;
+            rangoCabecera.Style.Font.FontColor = XLColor.White;
+            rangoCabecera.Style.Fill.BackgroundColor = XLColor.FromArgb(0, 112, 192);
+            rangoCabecera.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+            rangoCabecera.Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
+            rangoCabecera.Style.Border.OutsideBorderColor = XLColor.Black;
+
+            int row = 3;
             foreach (var c in lista)
             {
                 ws.Cell(row, 1).Value = c.NombreCita;
@@ -492,33 +675,65 @@ namespace NEXA.Controllers
             PdfWriter.GetInstance(doc, stream);
             doc.Open();
 
+            // Título NEXA grande con texto blanco y fondo azul (tabla con 1 celda)
+            var tablaTitulo = new PdfPTable(1)
+            {
+                WidthPercentage = 100,
+                SpacingAfter = 15
+            };
+            var celdaTitulo = new PdfPCell(new Phrase("NEXA", FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 36, BaseColor.WHITE)))
+            {
+                HorizontalAlignment = Element.ALIGN_CENTER,
+                VerticalAlignment = Element.ALIGN_MIDDLE,
+                BackgroundColor = new BaseColor(0, 70, 127),
+                Border = PdfPCell.NO_BORDER,
+                FixedHeight = 50
+            };
+            tablaTitulo.AddCell(celdaTitulo);
+            doc.Add(tablaTitulo);
+
+            // Subtítulo con color gris oscuro
             var titulo = new Paragraph("Reporte de Citas")
             {
                 Alignment = Element.ALIGN_CENTER,
-                SpacingAfter = 10,
-                Font = FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 16)
+                SpacingAfter = 15,
+                Font = FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 18, BaseColor.DARK_GRAY)
             };
             doc.Add(titulo);
 
+            // Fecha en cursiva y gris
             var fecha = new Paragraph($"Fecha: {DateTime.Now:yyyy-MM-dd HH:mm}")
             {
                 Alignment = Element.ALIGN_RIGHT,
-                SpacingAfter = 15
+                SpacingAfter = 15,
+                Font = FontFactory.GetFont(FontFactory.HELVETICA_OBLIQUE, 10, BaseColor.GRAY)
             };
             doc.Add(fecha);
 
             var table = CrearTablaPdf(new[] { "Nombre Cita", "Tipo Cita", "Fecha Cita", "Encargado", "Estado" });
 
+            // Aplicar estilo cabecera tabla (fondo azul oscuro, texto blanco)
+            for (int i = 0; i < 5; i++)
+            {
+                var cell = table.GetRow(0).GetCells()[i];
+                cell.BackgroundColor = new BaseColor(0, 70, 127);
+                cell.Phrase.Font.Color = BaseColor.WHITE;
+                cell.HorizontalAlignment = Element.ALIGN_CENTER;
+                cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                cell.Padding = 5f;
+                cell.BorderWidth = 1.5f;
+            }
+
             foreach (var c in lista)
             {
                 var cells = new[]
                 {
-                    new PdfPCell(new Phrase(c.NombreCita)),
-                    new PdfPCell(new Phrase(c.TipoCita)),
-                    new PdfPCell(new Phrase(c.FechaCita.ToString("yyyy-MM-dd"))),
-                    new PdfPCell(new Phrase(c.Encargado)),
-                    new PdfPCell(new Phrase(c.Estado))
-                };
+            new PdfPCell(new Phrase(c.NombreCita)),
+            new PdfPCell(new Phrase(c.TipoCita)),
+            new PdfPCell(new Phrase(c.FechaCita.ToString("yyyy-MM-dd"))),
+            new PdfPCell(new Phrase(c.Encargado)),
+            new PdfPCell(new Phrase(c.Estado))
+        };
                 foreach (var cell in cells) AplicarEstiloCeldaNormal(cell);
                 foreach (var cell in cells) table.AddCell(cell);
             }
@@ -549,27 +764,47 @@ namespace NEXA.Controllers
             using var workbook = new XLWorkbook();
             var ws = workbook.Worksheets.Add("Proyectos");
 
-            ws.Cell(1, 1).Value = "Nombre";
-            ws.Cell(1, 2).Value = "Descripción";
-            ws.Cell(1, 3).Value = "Fecha Inicio";
-            ws.Cell(1, 4).Value = "Fecha Fin";
-            ws.Cell(1, 5).Value = "Encargado";
-            ws.Cell(1, 6).Value = "Estado";
-            FormatearCabeceraExcel(ws, 1, 6);
+            // Título "NEXA" en grande con estilo
+            var rangoTitulo = ws.Range(1, 1, 1, 6);
+            rangoTitulo.Merge();
+            rangoTitulo.Value = "NEXA";
+            rangoTitulo.Style.Font.Bold = true;
+            rangoTitulo.Style.Font.FontSize = 28;
+            rangoTitulo.Style.Font.FontColor = XLColor.White;
+            rangoTitulo.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+            rangoTitulo.Style.Alignment.Vertical = XLAlignmentVerticalValues.Center;
+            rangoTitulo.Style.Fill.BackgroundColor = XLColor.FromArgb(0, 70, 127); // Azul oscuro
+            rangoTitulo.Style.Border.OutsideBorder = XLBorderStyleValues.Thick;
+            rangoTitulo.Style.Border.OutsideBorderColor = XLColor.Black;
+            ws.Row(1).Height = 40;
 
-            int row = 2;
+            // Cabecera con estilo
+            ws.Cell(2, 1).Value = "Nombre";
+            ws.Cell(2, 2).Value = "Descripción";
+            ws.Cell(2, 3).Value = "Fecha Inicio";
+            ws.Cell(2, 4).Value = "Fecha Fin";
+            ws.Cell(2, 5).Value = "Encargado";
+            ws.Cell(2, 6).Value = "Estado";
+
+            var rangoCabecera = ws.Range(2, 1, 2, 6);
+            rangoCabecera.Style.Font.Bold = true;
+            rangoCabecera.Style.Font.FontColor = XLColor.White;
+            rangoCabecera.Style.Fill.BackgroundColor = XLColor.FromArgb(0, 112, 192);
+            rangoCabecera.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+            rangoCabecera.Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
+            rangoCabecera.Style.Border.OutsideBorderColor = XLColor.Black;
+
+            int row = 3;
             foreach (var p in lista)
             {
                 ws.Cell(row, 1).Value = p.Nombre;
                 ws.Cell(row, 2).Value = p.Descripcion;
                 ws.Cell(row, 3).Value = p.FechaInicio.ToString("yyyy-MM-dd");
-                ws.Cell(row, 4).Value = p.FechaFin.ToString("yyyy-MM-dd"); // ya no usamos HasValue
-                ws.Cell(row, 5).Value = p.Usuario != null ? p.Usuario.NombreCompleto : "N/A";
+                ws.Cell(row, 4).Value = p.FechaFin.ToString("yyyy-MM-dd");
+                ws.Cell(row, 5).Value = p.Usuario?.NombreCompleto ?? "N/A";
                 ws.Cell(row, 6).Value = p.estado;
                 row++;
             }
-
-
 
             ws.Columns().AdjustToContents();
 
@@ -598,39 +833,70 @@ namespace NEXA.Controllers
             PdfWriter.GetInstance(doc, stream);
             doc.Open();
 
+            // Título NEXA grande con fondo azul y texto blanco en tabla
+            var tablaTitulo = new PdfPTable(1)
+            {
+                WidthPercentage = 100,
+                SpacingAfter = 15
+            };
+            var celdaTitulo = new PdfPCell(new Phrase("NEXA", FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 36, BaseColor.WHITE)))
+            {
+                HorizontalAlignment = Element.ALIGN_CENTER,
+                VerticalAlignment = Element.ALIGN_MIDDLE,
+                BackgroundColor = new BaseColor(0, 70, 127),
+                Border = PdfPCell.NO_BORDER,
+                FixedHeight = 50
+            };
+            tablaTitulo.AddCell(celdaTitulo);
+            doc.Add(tablaTitulo);
+
+            // Subtítulo con color gris oscuro
             var titulo = new Paragraph("Reporte de Proyectos")
             {
                 Alignment = Element.ALIGN_CENTER,
-                SpacingAfter = 10,
-                Font = FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 16)
+                SpacingAfter = 15,
+                Font = FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 18, BaseColor.DARK_GRAY)
             };
             doc.Add(titulo);
 
+            // Fecha en cursiva y gris
             var fecha = new Paragraph($"Fecha: {DateTime.Now:yyyy-MM-dd HH:mm}")
             {
                 Alignment = Element.ALIGN_RIGHT,
-                SpacingAfter = 15
+                SpacingAfter = 15,
+                Font = FontFactory.GetFont(FontFactory.HELVETICA_OBLIQUE, 10, BaseColor.GRAY)
             };
             doc.Add(fecha);
 
             var table = CrearTablaPdf(new[] { "Nombre", "Descripción", "Fecha Inicio", "Fecha Fin", "Encargado", "Estado" });
 
+            // Aplicar estilo cabecera tabla (fondo azul oscuro, texto blanco)
+            for (int i = 0; i < 6; i++)
+            {
+                var cell = table.GetRow(0).GetCells()[i];
+                cell.BackgroundColor = new BaseColor(0, 70, 127);
+                cell.Phrase.Font.Color = BaseColor.WHITE;
+                cell.HorizontalAlignment = Element.ALIGN_CENTER;
+                cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                cell.Padding = 5f;
+                cell.BorderWidth = 1.5f;
+            }
+
             foreach (var p in lista)
             {
                 var cells = new[]
                 {
-                    new PdfPCell(new Phrase(p.Nombre)),
-                    new PdfPCell(new Phrase(p.Descripcion)),
-                    new PdfPCell(new Phrase(p.FechaInicio.ToString("yyyy-MM-dd"))),
-                    new PdfPCell(new Phrase(p.FechaFin.ToString("yyyy-MM-dd"))), // FechaFin no nullable
-                    new PdfPCell(new Phrase(p.Usuario != null ? p.Usuario.NombreCompleto : "N/A")),
-                    new PdfPCell(new Phrase(p.estado))
-                };
+            new PdfPCell(new Phrase(p.Nombre)),
+            new PdfPCell(new Phrase(p.Descripcion)),
+            new PdfPCell(new Phrase(p.FechaInicio.ToString("yyyy-MM-dd"))),
+            new PdfPCell(new Phrase(p.FechaFin.ToString("yyyy-MM-dd"))),
+            new PdfPCell(new Phrase(p.Usuario?.NombreCompleto ?? "N/A")),
+            new PdfPCell(new Phrase(p.estado))
+        };
 
                 foreach (var cell in cells) AplicarEstiloCeldaNormal(cell);
                 foreach (var cell in cells) table.AddCell(cell);
             }
-
 
             doc.Add(table);
             doc.Close();
@@ -639,5 +905,6 @@ namespace NEXA.Controllers
         }
 
         #endregion
+
     }
 }
