@@ -128,6 +128,14 @@ a, .accent, .link {
     }
 }
 
+/* Clase para el borde azul personalizado */
+.border-custom-blue {
+    border: 1px solid #0c3b5e !important;
+}
 
-
+/* Clase para el encabezado con fondo azul personalizado */
+.bg-custom-blue {
+    background-color: #0c3b5e !important;
+    color: white !important;
+}
 

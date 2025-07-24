@@ -4,22 +4,9 @@
     ViewData["Title"] = "Reportes";
 }
 
-<h1 style="color: #0c3b5e;">Reportes</h1>
-
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
-
-<style>
-    /* Clase para el borde azul personalizado */
-    .border-custom-blue {
-        border: 1px solid #0c3b5e !important;
-    }
-
-    /* Clase para el encabezado con fondo azul personalizado */
-    .bg-custom-blue {
-        background-color: #0c3b5e !important;
-        color: white !important;
-    }
-</style>
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-3">
+    <h1 class="mb-2 mb-md-0">@ViewData["Title"]</h1>
+</div>
 
 <div class="container py-4">
     <div class="row g-4 mb-5">
@@ -65,32 +52,37 @@
                     <h5 class="mb-0">Pedidos</h5>
                 </div>
                 <div class="card-body">
-                    <form method="get" asp-action="Todos" asp-controller="Reportes" class="row g-3 align-items-center mb-3">
-                        <div class="col-auto">
-                            <label for="desdePedido" class="col-form-label">Desde:</label>
-                        </div>
-                        <div class="col-auto">
-                            <input type="date" id="desdePedido" name="desdePedido" value="@(ViewData["desdePedido"] ?? "")" class="form-control" />
-                        </div>
-                        <div class="col-auto">
-                            <label for="hastaPedido" class="col-form-label">Hasta:</label>
-                        </div>
-                        <div class="col-auto">
-                            <input type="date" id="hastaPedido" name="hastaPedido" value="@(ViewData["hastaPedido"] ?? "")" class="form-control" />
-                        </div>
-                        <div class="col-auto">
-                            <button type="submit" class="btn btn-primary">Filtrar</button>
+                    <form method="get" asp-action="Todos" asp-controller="Reportes" class="mb-3">
+                        <div class="row g-2 align-items-end">
+                            <div class="col-12">
+                                <label class="form-label fw-semibold">Filtrar por fecha:</label>
+                            </div>
+                            <div class="col-6">
+                                <label for="desdePedido" class="form-label">Desde</label>
+                                <input type="date" id="desdePedido" name="desdePedido" value="@(ViewData["desdePedido"] ?? "")" class="form-control" />
+                            </div>
+                            <div class="col-6">
+                                <label for="hastaPedido" class="form-label">Hasta</label>
+                                <input type="date" id="hastaPedido" name="hastaPedido" value="@(ViewData["hastaPedido"] ?? "")" class="form-control" />
+                            </div>
+                            <div class="col-12 text-end">
+                                <button type="submit" class="btn btn-primary mt-2">Filtrar</button>
+                            </div>
                         </div>
                     </form>
-                    <a class="btn btn-success me-2" href="@Url.Action("ExcelPedidos", "Reportes", new { desde = ViewData["desdePedido"], hasta = ViewData["hastaPedido"] })">
-                        <i class="bi bi-file-earmark-excel"></i> Descargar Excel
-                    </a>
-                    <a class="btn btn-danger" href="@Url.Action("PdfPedidos", "Reportes", new { desde = ViewData["desdePedido"], hasta = ViewData["hastaPedido"] })">
-                        <i class="bi bi-file-earmark-pdf"></i> Descargar PDF
-                    </a>
+
+                    <div class="d-flex justify-content-between">
+                        <a class="btn btn-success w-100 me-1" href="@Url.Action("ExcelPedidos", "Reportes", new { desde = ViewData["desdePedido"], hasta = ViewData["hastaPedido"] })">
+                            <i class="bi bi-file-earmark-excel"></i> Excel
+                        </a>
+                        <a class="btn btn-danger w-100 ms-1" href="@Url.Action("PdfPedidos", "Reportes", new { desde = ViewData["desdePedido"], hasta = ViewData["hastaPedido"] })">
+                            <i class="bi bi-file-earmark-pdf"></i> PDF
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
+
 
         <!-- Citas -->
         <div class="col-12 col-md-6 col-lg-4">
@@ -99,29 +91,32 @@
                     <h5 class="mb-0">Citas</h5>
                 </div>
                 <div class="card-body">
-                    <form method="get" asp-action="Todos" asp-controller="Reportes" class="row g-3 align-items-center mb-3">
-                        <div class="col-auto">
-                            <label for="desdeCita" class="col-form-label">Desde:</label>
-                        </div>
-                        <div class="col-auto">
-                            <input type="date" id="desdeCita" name="desdeCita" value="@(ViewData["desdeCita"] ?? "")" class="form-control" />
-                        </div>
-                        <div class="col-auto">
-                            <label for="hastaCita" class="col-form-label">Hasta:</label>
-                        </div>
-                        <div class="col-auto">
-                            <input type="date" id="hastaCita" name="hastaCita" value="@(ViewData["hastaCita"] ?? "")" class="form-control" />
-                        </div>
-                        <div class="col-auto">
-                            <button type="submit" class="btn btn-primary">Filtrar</button>
+                    <form method="get" asp-action="Todos" asp-controller="Reportes" class="mb-3">
+                        <div class="row g-2 align-items-end">
+                            <div class="col-12">
+                                <label class="form-label fw-semibold">Filtrar por fecha:</label>
+                            </div>
+                            <div class="col-6">
+                                <label for="desdeCita" class="form-label">Desde</label>
+                                <input type="date" id="desdeCita" name="desdeCita" value="@(ViewData["desdeCita"] ?? "")" class="form-control" />
+                            </div>
+                            <div class="col-6">
+                                <label for="hastaCita" class="form-label">Hasta</label>
+                                <input type="date" id="hastaCita" name="hastaCita" value="@(ViewData["hastaCita"] ?? "")" class="form-control" />
+                            </div>
+                            <div class="col-12 text-end">
+                                <button type="submit" class="btn btn-primary mt-2">Filtrar</button>
+                            </div>
                         </div>
                     </form>
-                    <a class="btn btn-success me-2" href="@Url.Action("ExcelCitas", "Reportes", new { desde = ViewData["desdeCita"], hasta = ViewData["hastaCita"] })">
-                        <i class="bi bi-file-earmark-excel"></i> Descargar Excel
-                    </a>
-                    <a class="btn btn-danger" href="@Url.Action("PdfCitas", "Reportes", new { desde = ViewData["desdeCita"], hasta = ViewData["hastaCita"] })">
-                        <i class="bi bi-file-earmark-pdf"></i> Descargar PDF
-                    </a>
+                    <div class="d-flex justify-content-between">
+                        <a class="btn btn-success w-100 me-1" href="@Url.Action("ExcelCitas", "Reportes", new { desde = ViewData["desdeCita"], hasta = ViewData["hastaCita"] })">
+                            <i class="bi bi-file-earmark-excel"></i> Excel
+                        </a>
+                        <a class="btn btn-danger w-100 ms-1" href="@Url.Action("PdfCitas", "Reportes", new { desde = ViewData["desdeCita"], hasta = ViewData["hastaCita"] })">
+                            <i class="bi bi-file-earmark-pdf"></i> PDF
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
@@ -133,32 +128,36 @@
                     <h5 class="mb-0">Proyectos</h5>
                 </div>
                 <div class="card-body">
-                    <form method="get" asp-action="Todos" asp-controller="Reportes" class="row g-3 align-items-center mb-3">
-                        <div class="col-auto">
-                            <label for="desdeProyecto" class="col-form-label">Desde:</label>
-                        </div>
-                        <div class="col-auto">
-                            <input type="date" id="desdeProyecto" name="desdeProyecto" value="@(ViewData["desdeProyecto"] ?? "")" class="form-control" />
-                        </div>
-                        <div class="col-auto">
-                            <label for="hastaProyecto" class="col-form-label">Hasta:</label>
-                        </div>
-                        <div class="col-auto">
-                            <input type="date" id="hastaProyecto" name="hastaProyecto" value="@(ViewData["hastaProyecto"] ?? "")" class="form-control" />
-                        </div>
-                        <div class="col-auto">
-                            <button type="submit" class="btn btn-primary">Filtrar</button>
+                    <form method="get" asp-action="Todos" asp-controller="Reportes" class="mb-3">
+                        <div class="row g-2 align-items-end">
+                            <div class="col-12">
+                                <label class="form-label fw-semibold">Filtrar por fecha:</label>
+                            </div>
+                            <div class="col-6">
+                                <label for="desdeProyecto" class="form-label">Desde</label>
+                                <input type="date" id="desdeProyecto" name="desdeProyecto" value="@(ViewData["desdeProyecto"] ?? "")" class="form-control" />
+                            </div>
+                            <div class="col-6">
+                                <label for="hastaProyecto" class="form-label">Hasta</label>
+                                <input type="date" id="hastaProyecto" name="hastaProyecto" value="@(ViewData["hastaProyecto"] ?? "")" class="form-control" />
+                            </div>
+                            <div class="col-12 text-end">
+                                <button type="submit" class="btn btn-primary mt-2">Filtrar</button>
+                            </div>
                         </div>
                     </form>
-                    <a class="btn btn-success me-2" href="@Url.Action("ExcelProyectos", "Reportes", new { desde = ViewData["desdeProyecto"], hasta = ViewData["hastaProyecto"] })">
-                        <i class="bi bi-file-earmark-excel"></i> Descargar Excel
-                    </a>
-                    <a class="btn btn-danger" href="@Url.Action("PdfProyectos", "Reportes", new { desde = ViewData["desdeProyecto"], hasta = ViewData["hastaProyecto"] })">
-                        <i class="bi bi-file-earmark-pdf"></i> Descargar PDF
-                    </a>
+                    <div class="d-flex justify-content-between">
+                        <a class="btn btn-success w-100 me-1" href="@Url.Action("ExcelProyectos", "Reportes", new { desde = ViewData["desdeProyecto"], hasta = ViewData["hastaProyecto"] })">
+                            <i class="bi bi-file-earmark-excel"></i> Excel
+                        </a>
+                        <a class="btn btn-danger w-100 ms-1" href="@Url.Action("PdfProyectos", "Reportes", new { desde = ViewData["desdeProyecto"], hasta = ViewData["hastaProyecto"] })">
+                            <i class="bi bi-file-earmark-pdf"></i> PDF
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
+
 
     </div>
 
@@ -167,28 +166,30 @@
         <div class="card-header bg-custom-blue">
             <h5 class="mb-0">Historial de Reportes Generados (Últimos 20)</h5>
         </div>
-        <div class="card-body table-responsive">
+        <div class="card-body">
             @if (Model != null && Model.Count > 0)
             {
-                <table class="table table-striped table-bordered align-middle">
-                    <thead class="table-light">
-                        <tr>
-                            <th>Tipo de Reporte</th>
-                            <th>Filtros Aplicados</th>
-                            <th>Fecha de Generación</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var item in Model)
-                        {
+                <div style="max-height: 180px; overflow-y: auto;" class="table-responsive">
+                    <table class="table table-striped table-bordered align-middle mb-0">
+                        <thead class="table-light sticky-top bg-white">
                             <tr>
-                                <td>@item.TipoReporte</td>
-                                <td>@item.FiltrosAplicados</td>
-                                <td>@item.FechaGeneracion.ToString("yyyy-MM-dd HH:mm:ss")</td>
+                                <th>Tipo de Reporte</th>
+                                <th>Filtros Aplicados</th>
+                                <th>Fecha de Generación</th>
                             </tr>
-                        }
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>@item.TipoReporte</td>
+                                    <td>@item.FiltrosAplicados</td>
+                                    <td>@item.FechaGeneracion.ToString("yyyy-MM-dd HH:mm:ss")</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
             }
             else
             {

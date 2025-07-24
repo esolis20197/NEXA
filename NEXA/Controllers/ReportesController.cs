@@ -10,11 +10,11 @@ using System.Linq;
 
 namespace NEXA.Controllers
 {
-    public class ReportesController : Controller
+    public class ReportesController : BaseController
     {
         private readonly NEXAContext _context;
 
-        public ReportesController(NEXAContext context)
+        public ReportesController(NEXAContext context) : base(context)
         {
             _context = context;
         }
