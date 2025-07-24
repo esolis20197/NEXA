@@ -21,7 +21,9 @@
     <header>
         <nav class="navbar navbar-custom navbar-expand-sm border-bottom box-shadow mb-3">
             <div class="container-fluid">
-                <a class="navbar-brand" asp-controller="Home" asp-action="Index">
+                <a class="navbar-brand"
+                   asp-controller="Home"
+                   asp-action="@(sesionActiva ? "IndexPanel" : "Index")">
                     <img src="~/imagenes/LogoPrimario_Blanco.png" alt="Logo Empresa" width="200" height="80" />
                 </a>
 
@@ -99,7 +101,6 @@
                         }
                         else if (usuarioRol == "Empleado")
                         {
-                            <li class="nav-item"><a class="nav-link text-white sidebar-link" asp-controller="Home" asp-action="IndexEmpleado"><i class="fas fa-calendar-alt fa-fw pe-5"></i>Inicio empleado</a></li>
                             <li class="nav-item"><a class="nav-link text-white sidebar-link" asp-controller="Proyecto" asp-action="Index"><i class="fas fa-project-diagram fa-fw pe-5"></i>Proyectos</a></li>
                             <li class="nav-item"><a class="nav-link text-white sidebar-link" asp-controller="Pedido" asp-action="Historial"><i class="fas fa-clipboard-list fa-fw pe-5"></i>Historial de pedidos</a></li>
                             <li class="nav-item"><a class="nav-link text-white sidebar-link" asp-controller="Citas" asp-action="Index"><i class="fas fa-clock fa-fw pe-5"></i>Historial de citas</a></li>
@@ -107,8 +108,7 @@
                         
                         }
                         else if (usuarioRol == "Usuario")
-                        {                            
-                            <li class="nav-item"><a class="nav-link text-white sidebar-link" asp-controller="Home" asp-action="IndexCliente"><i class="fas fa-home fa-fw pe-5"></i>Inicio cliente</a></li>
+                        { 
                             <li class="nav-item"><a class="nav-link text-white sidebar-link" asp-controller="Proyecto" asp-action="Index"><i class="fas fa-project-diagram fa-fw pe-5"></i>Proyectos</a></li>
                             <li class="nav-item"><a class="nav-link text-white sidebar-link" asp-controller="Pedido" asp-action="Historial"><i class="fas fa-clipboard-list fa-fw pe-5"></i>Historial de pedidos</a></li>
                             <li class="nav-item"><a class="nav-link text-white sidebar-link" asp-controller="Citas" asp-action="Index"><i class="fas fa-clock fa-fw pe-5"></i>Solicitar citas</a></li>

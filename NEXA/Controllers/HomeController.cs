@@ -17,14 +17,25 @@ namespace NEXA.Controllers
         {
             return View();
         }
-        public IActionResult IndexCliente()
+        public IActionResult IndexPanel()
         {
-            return View();
+            var rol = HttpContext.Session.GetString("UsuarioRol");
+
+            var model = new DashboardViewModel
+            {
+                Rol = rol ?? "SinRol",
+                TotalUsuarios = _context.Usuario.Count(),
+                TotalInventario = _context.Inventario.Count(),
+                TotalPedidos = _context.Pedidos.Count(),
+                TotalCitasPendientes = _context.Citas.Count(c => c.Estado == "Pendiente"),
+                TotalPedidosPendientes = _context.Pedidos.Count(c => c.Estado == "Pendiente"),
+                TotalProyectosPendientes = _context.Proyecto.Count(c => c.estado == "Pendiente"),
+
+            };
+
+            return View(model);
         }
-        public IActionResult IndexEmpleado()
-        {
-            return View();
-        }
+
         public IActionResult Privacy()
         {
             return View();

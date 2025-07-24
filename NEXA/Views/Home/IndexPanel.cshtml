@@ -1,0 +1,113 @@
+﻿@model NEXA.Models.DashboardViewModel
+
+@{
+    ViewData["Title"] = "Panel de control";
+    var usuarioNombre = Context.Session.GetString("UsuarioNombre");
+}
+
+<div class="container py-4">
+    <h2 class="mb-4">Bienvenido, @usuarioNombre</h2>
+    <div class="row g-4">
+
+        @if (Model.Rol == "Administrador")
+        {
+            <div class="container py-4">
+                <div class="row g-4 mb-5">
+
+                    <!-- Usuarios Registrados -->
+                    <div class="col-12 col-md-6 col-lg-4">
+                        <div class="card h-100 shadow-sm border-custom-blue">
+                            <div class="card-header bg-custom-blue text-center">
+                                <h5 class="mb-0">
+                                    <i class="fas fa-users me-2"></i>Usuarios Registrados
+                                </h5>
+                            </div>
+                            <div class="card-body d-flex flex-column justify-content-center align-items-center gap-3">
+                                <p class="fs-2 fw-bold">@Model.TotalUsuarios</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Productos en Inventario -->
+                    <div class="col-12 col-md-6 col-lg-4">
+                        <div class="card h-100 shadow-sm border-custom-blue">
+                            <div class="card-header bg-custom-blue text-center">
+                                <h5 class="mb-0">
+                                    <i class="fas fa-box me-2"></i>Productos en Inventario
+                                </h5>
+                            </div>
+                            <div class="card-body d-flex flex-column justify-content-center align-items-center gap-3">
+                                <p class="fs-2 fw-bold">@Model.TotalInventario</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Pedidos Registrados -->
+                    <div class="col-12 col-md-6 col-lg-4">
+                        <div class="card h-100 shadow-sm border-custom-blue">
+                            <div class="card-header bg-custom-blue text-center">
+                                <h5 class="mb-0">
+                                    <i class="fas fa-shopping-cart me-2"></i>Pedidos Registrados
+                                </h5>
+                            </div>
+                            <div class="card-body d-flex flex-column justify-content-center align-items-center gap-3">
+                                <p class="fs-2 fw-bold">@Model.TotalPedidos</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Pedidos Pendientes -->
+                    <div class="col-12 col-md-6 col-lg-4">
+                        <div class="card h-100 shadow-sm border-custom-blue">
+                            <div class="card-header bg-custom-blue text-center">
+                                <h5 class="mb-0">
+                                    <i class="fas fa-hourglass-half me-2"></i>Pedidos Pendientes
+                                </h5>
+                            </div>
+                            <div class="card-body d-flex flex-column justify-content-center align-items-center gap-3">
+                                <p class="fs-2 fw-bold">@Model.TotalPedidosPendientes</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Citas Pendientes -->
+                    <div class="col-12 col-md-6 col-lg-4">
+                        <div class="card h-100 shadow-sm border-custom-blue">
+                            <div class="card-header bg-custom-blue text-center">
+                                <h5 class="mb-0">
+                                    <i class="fas fa-calendar-alt me-2"></i>Citas Pendientes
+                                </h5>
+                            </div>
+                            <div class="card-body d-flex flex-column justify-content-center align-items-center gap-3">
+                                <p class="fs-2 fw-bold">@Model.TotalCitasPendientes</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Proyectos Pendientes -->
+                    <div class="col-12 col-md-6 col-lg-4">
+                        <div class="card h-100 shadow-sm border-custom-blue">
+                            <div class="card-header bg-custom-blue text-center">
+                                <h5 class="mb-0">
+                                    <i class="fas fa-project-diagram me-2"></i>Proyectos Pendientes
+                                </h5>
+                            </div>
+                            <div class="card-body d-flex flex-column justify-content-center align-items-center gap-3">
+                                <p class="fs-2 fw-bold">@Model.TotalProyectosPendientes</p>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        }
+        else if (Model.Rol == "Empleado")
+        {
+            
+        }
+        else if (Model.Rol == "Usuario")
+        {
+            
+        }
+    </div>
+</div>

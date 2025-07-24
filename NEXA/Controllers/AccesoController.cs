@@ -44,7 +44,7 @@ namespace NEXA.Controllers
                     HttpContext.Session.SetString("UsuarioRol", usuario.Rol.ToString());
 
                     TempData["Mensaje"] = $"Bienvenido {usuario.NombreUsuario}";
-                    return RedirectToAction("Index", "Home");
+                    return RedirectToAction("IndexPanel", "Home");
                 }
 
                 TempData["MensajeInicioFallido"] = "Correo o contrasena incorrectos.";
