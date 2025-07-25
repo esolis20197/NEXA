@@ -25,7 +25,8 @@ namespace NEXA.Models
         public DbSet<ClientesPorGrupo> ClientesPorGrupos { get; set; }
 
         public DbSet<ReporteHistorial> ReporteHistoriales { get; set; }
-
+        public DbSet<Gasto> Gastos { get; set; }
+        public DbSet<CuentaPorPagar> CuentasPorPagar { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

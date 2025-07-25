@@ -96,7 +96,31 @@
                             <li class="nav-item"><a class="nav-link text-white sidebar-link" asp-controller="Citas" asp-action="Index"><i class="fas fa-clock fa-fw pe-5"></i>Historial de citas</a></li>
                             <li class="nav-item"><a class="nav-link text-white sidebar-link" asp-controller="CorreosPromocionales" asp-action="Index"><i class="fas fa-envelope fa-fw pe-5"></i>Correos Promocionales</a></li>                        
                             <li class="nav-item"><a class="nav-link text-white sidebar-link" asp-controller="Reportes" asp-action="Todos"><i class="fas fa-file fa-fw pe-5"></i>Reportes</a></li>
-
+                            <li class="nav-item">
+                                <a class="nav-link text-white sidebar-link" data-bs-toggle="collapse" href="#contabilidadMenu" role="button" aria-expanded="false" aria-controls="contabilidadMenu">
+                                    <i class="fas fa-calculator fa-fw pe-5"></i>Contabilidad
+                                    <i class="fas fa-chevron-down ms-2"></i>
+                                </a>
+                                <div class="collapse" id="contabilidadMenu">
+                                    <ul class="nav flex-column ms-3">
+                                        <li class="nav-item">
+                                            <a class="nav-link text-white sidebar-link" asp-controller="Gastos" asp-action="Index">
+                                                <i class="fas fa-money-bill-wave fa-fw pe-3"></i>Gastos
+                                            </a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link text-white sidebar-link" asp-controller="CuentasPorPagar" asp-action="Index">
+                                                <i class="fas fa-file-invoice-dollar fa-fw pe-3"></i>Cuentas por pagar
+                                            </a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link text-white sidebar-link" asp-controller="Contabilidad" asp-action="Cierres">
+                                                <i class="fas fa-chart-line fa-fw pe-3"></i>Cierres financieros
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </li>
 
                         }
                         else if (usuarioRol == "Empleado")
@@ -150,25 +174,32 @@
     <script src="~/js/site.js" asp-append-version="true"></script>
 
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
+                document.addEventListener("DOMContentLoaded", function () {
             document.querySelectorAll('.sidebar-link').forEach(function (el) {
                 el.addEventListener('click', function (e) {
-                    e.preventDefault(); // Detener navegación
-
-                    const url = el.getAttribute('href'); // Guardar URL destino
+                    // Si el enlace es un toggle de submenú (tiene data-bs-toggle), no hacemos nada
+                    if (el.hasAttribute('data-bs-toggle')) {
+                        return;
+                    }
+                    // Si el href es "#" o está vacío, tampoco hacemos nada
+                    const url = el.getAttribute('href');
+                    if (!url || url === "#") {
+                        return;
+                    }
+                    e.preventDefault();
                     const sidebar = bootstrap.Offcanvas.getInstance(document.getElementById('sidebarMenu'));
-
                     if (sidebar) {
-                        sidebar.hide(); // Cierra con animación
+                        sidebar.hide();
                         setTimeout(function () {
-                            window.location.href = url; // Redirige tras animación
-                        }, 300); // Tiempo igual al de la animación de Bootstrap
+                            window.location.href = url;
+                        }, 300);
                     } else {
-                        window.location.href = url; // fallback
+                        window.location.href = url;
                     }
                 });
             });
         });
+
     </script>
 
     @await RenderSectionAsync("Scripts", required: false)

@@ -1,0 +1,64 @@
+﻿@model NEXA.Models.CuentaPorPagar
+
+@{
+    ViewData["Title"] = "Editar Cuenta por Pagar";
+}
+
+<div class="container py-4">
+    <div class="card shadow-sm p-4">
+        <h4 class="text-center mb-4">@ViewData["Title"]</h4>
+        <hr />
+        <form asp-action="Edit" novalidate>
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+            <input type="hidden" asp-for="Id" />
+
+            <div class="mb-3">
+                <label asp-for="NombreDeuda" class="form-label"></label>
+                <input asp-for="NombreDeuda" class="form-control" placeholder="Nombre de la deuda" />
+                <span asp-validation-for="NombreDeuda" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Fecha de registro</label>
+                <input type="hidden" asp-for="Fecha" />
+                <div class="form-control-plaintext bg-light rounded px-3 py-2 border d-flex align-items-center" style="width:max-content;">
+                    <i class="bi bi-calendar-event me-2"></i>
+                    @Model.Fecha.ToString("dd/MM/yyyy")
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Descripcion" class="form-label"></label>
+                <textarea asp-for="Descripcion" class="form-control" rows="3" placeholder="Descripción"></textarea>
+                <span asp-validation-for="Descripcion" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Monto" class="form-label"></label>
+                <input asp-for="Monto" class="form-control" type="number" step="0.01" min="0.01" placeholder="Monto en colones" />
+                <span asp-validation-for="Monto" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Proveedor" class="form-label"></label>
+                <input asp-for="Proveedor" class="form-control" placeholder="Proveedor" />
+                <span asp-validation-for="Proveedor" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="PlazaParaPagar" class="form-label"></label>
+                <input asp-for="PlazaParaPagar" class="form-control" type="date" />
+                <span asp-validation-for="PlazaParaPagar" class="text-danger"></span>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Guardar</button>
+            <a asp-action="Index" class="btn btn-secondary ms-2">Volver al listado</a>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

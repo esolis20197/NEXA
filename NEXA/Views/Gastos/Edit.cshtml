@@ -1,0 +1,73 @@
+﻿@model NEXA.Models.Gasto
+
+@{
+    ViewData["Title"] = "Editar Gasto";
+    var categorias = new List<string> { "Servicios", "Transporte", "Alquiler", "Mantenimiento", "Planillas", "Publicidad", "Impuestos", "Otros" };
+}
+
+<div class="container py-4">
+    <div class="card shadow-sm p-4">
+        <h4 class="text-center mb-4">@ViewData["Title"]</h4>
+        <hr />
+        <form asp-action="Edit" novalidate>
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+            <input type="hidden" asp-for="Id" />
+
+            <div class="mb-3">
+                <label asp-for="NombreGasto" class="form-label"></label>
+                <input asp-for="NombreGasto" class="form-control" placeholder="Nombre del gasto" />
+                <span asp-validation-for="NombreGasto" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Fecha del gasto</label>
+                <input type="hidden" asp-for="Fecha" />
+                <div class="form-control-plaintext bg-light rounded px-3 py-2 border d-flex align-items-center" style="width:max-content;">
+                    <i class="bi bi-calendar-event me-2"></i>
+                    @Model.Fecha.ToString("dd/MM/yyyy")
+                </div>
+            </div>
+
+
+            <div class="mb-3">
+                <label asp-for="Descripcion" class="form-label"></label>
+                <textarea asp-for="Descripcion" class="form-control" rows="3" placeholder="Descripción"></textarea>
+                <span asp-validation-for="Descripcion" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Monto" class="form-label"></label>
+                <input asp-for="Monto" class="form-control" type="number"  placeholder="Monto en colones" />
+                <span asp-validation-for="Monto" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Categoria" class="form-label"></label>
+                <select asp-for="Categoria" class="form-select">
+                    <option value="">-- Selecciona una categoría --</option>
+                    @foreach (var cat in categorias)
+                    {
+                        if (Model.Categoria == cat)
+                        {
+                            <option value="@cat" selected>@cat</option>
+                        }
+                        else
+                        {
+                            <option value="@cat">@cat</option>
+                        }
+                    }
+                </select>
+                <span asp-validation-for="Categoria" class="text-danger"></span>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Guardar</button>
+            <a asp-action="Index" class="btn btn-secondary ms-2">Volver al listado</a>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
