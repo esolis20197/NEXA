@@ -11,7 +11,6 @@ namespace NEXA.Controllers
     public class CuentasPorPagarController : BaseController
     {
         private readonly NEXAContext _context;
-
         public CuentasPorPagarController(NEXAContext context) : base(context)
         {
             _context = context;
@@ -40,10 +39,9 @@ namespace NEXA.Controllers
             return View();
         }
 
-        // POST: CuentasPorPagar/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,NombreDeuda,Fecha,Descripcion,Monto,Proveedor,PlazaParaPagar")] CuentaPorPagar cuentaPorPagar)
+        public async Task<IActionResult> Create([Bind("Id,NombreDeuda,Fecha,Descripcion,Monto,Proveedor,PlazaParaPagar,Estado,GastoId")] CuentaPorPagar cuentaPorPagar)
         {
             if (ModelState.IsValid)
             {
@@ -51,6 +49,7 @@ namespace NEXA.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+
             return View(cuentaPorPagar);
         }
 
@@ -68,12 +67,20 @@ namespace NEXA.Controllers
         // POST: CuentasPorPagar/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,NombreDeuda,Fecha,Descripcion,Monto,Proveedor,PlazaParaPagar")] CuentaPorPagar cuentaPorPagar)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,NombreDeuda,Fecha,Descripcion,Monto,Proveedor,PlazaParaPagar,Estado,GastoId")] CuentaPorPagar cuentaPorPagar)
         {
             if (id != cuentaPorPagar.Id) return NotFound();
 
             if (ModelState.IsValid)
             {
+                // Recupera Estado y GastoId originales (para no perderlos)
+                var cuentaOriginal = await _context.CuentasPorPagar.AsNoTracking().FirstOrDefaultAsync(c => c.Id == id);
+                if (cuentaOriginal != null)
+                {
+                    cuentaPorPagar.Estado = cuentaOriginal.Estado;
+                    cuentaPorPagar.GastoId = cuentaOriginal.GastoId;
+                }
+
                 try
                 {
                     _context.Update(cuentaPorPagar);
@@ -86,6 +93,17 @@ namespace NEXA.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+
+            // DEPURACIÓN: Ver errores si hay
+            foreach (var key in ModelState.Keys)
+            {
+                var errors = ModelState[key].Errors;
+                foreach (var error in errors)
+                {
+                    System.Diagnostics.Debug.WriteLine($"Error en {key}: {error.ErrorMessage}");
+                }
+            }
+
             return View(cuentaPorPagar);
         }
 
@@ -95,10 +113,15 @@ namespace NEXA.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var cuentaPorPagar = await _context.CuentasPorPagar.FindAsync(id);
-            if (cuentaPorPagar != null)
+
+            // NO permitir eliminar si ya está asociada a un gasto
+            if (cuentaPorPagar.GastoId != null)
             {
-                _context.CuentasPorPagar.Remove(cuentaPorPagar);
+                TempData["ErrorMensaje"] = "No se puede eliminar esta cuenta porque ya fue pagada y está asociada a un gasto.";
+                return RedirectToAction(nameof(Index));
             }
+
+            _context.CuentasPorPagar.Remove(cuentaPorPagar);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
@@ -106,6 +129,46 @@ namespace NEXA.Controllers
         private bool CuentaPorPagarExists(int id)
         {
             return _context.CuentasPorPagar.Any(e => e.Id == id);
+        }
+
+        // GET: CuentasPorPagar/MarcarPagada/5
+        public async Task<IActionResult> MarcarPagada(int? id)
+        {
+            if (id == null) return NotFound();
+
+            var cuenta = await _context.CuentasPorPagar.FindAsync(id);
+            if (cuenta == null || cuenta.Estado == "Pagada") return NotFound();
+
+            ViewBag.Categorias = new List<string> { "Servicios", "Productos", "Transporte", "Alquiler", "Mantenimiento", "Planillas", "Publicidad", "Impuestos", "Otros" };
+            return View(cuenta);
+        }
+
+        // POST: CuentasPorPagar/MarcarPagada/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> MarcarPagada(int id, string categoria, DateTime fechaPago)
+        {
+            var cuenta = await _context.CuentasPorPagar.FindAsync(id);
+            if (cuenta == null || cuenta.Estado == "Pagada") return NotFound();
+
+            var gasto = new Gasto
+            {
+                NombreGasto = cuenta.NombreDeuda,
+                Fecha = fechaPago,
+                Descripcion = $"{cuenta.Descripcion} (Proveedor: {cuenta.Proveedor})",
+                Monto = cuenta.Monto,
+                Categoria = categoria
+            };
+
+            _context.Gastos.Add(gasto);
+            await _context.SaveChangesAsync();
+
+            cuenta.Estado = "Pagada";
+            cuenta.GastoId = gasto.Id;
+            _context.CuentasPorPagar.Update(cuenta);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index));
         }
     }
 }

@@ -9,8 +9,11 @@
     <div class="card shadow-sm p-4">
         <h4 class="text-center mb-4">@ViewData["Title"]</h4>
         <hr />
-        <form asp-action="Create" novalidate>
-            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+        <form asp-action="Create">
+            <div asp-validation-summary="All" class="text-danger mb-3"></div>
+
+            <input type="hidden" asp-for="Estado" value="Pendiente" />
+            <input type="hidden" asp-for="GastoId" value="" />
 
             <div class="mb-3">
                 <label asp-for="NombreDeuda" class="form-label"></label>
@@ -20,10 +23,7 @@
 
             <div class="mb-3">
                 <label asp-for="Fecha" class="form-label"></label>
-                <input asp-for="Fecha" class="form-control"
-                       type="date"
-                       max="@fechaHoy"
-                       value="@fechaHoy" />
+                <input asp-for="Fecha" class="form-control" type="date" max="@fechaHoy" value="@fechaHoy" />
                 <span class="form-text text-muted">
                     Selecciona la fecha de registro de la deuda (no puede ser una fecha futura).
                 </span>
@@ -50,10 +50,7 @@
 
             <div class="mb-3">
                 <label asp-for="PlazaParaPagar" class="form-label"></label>
-                <input asp-for="PlazaParaPagar" class="form-control"
-                       type="date"
-                       min="@fechaHoy"
-                       placeholder="Fecha límite para pagar" />
+                <input asp-for="PlazaParaPagar" class="form-control" type="date" min="@fechaHoy" />
                 <span class="form-text text-muted">
                     Selecciona la fecha límite para pagar la deuda.
                 </span>

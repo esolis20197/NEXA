@@ -11,9 +11,19 @@
     </a>
 </div>
 
-<div class="mb-3">
-    <label for="searchInput" class="form-label">Buscar</label>
-    <input type="text" id="searchInput" class="form-control" placeholder="Buscar por deuda, descripción o proveedor" />
+<div class="row mb-3">
+    <div class="col-md-6 mb-2">
+        <label for="searchInput" class="form-label">Buscar</label>
+        <input type="text" id="searchInput" class="form-control" placeholder="Buscar por deuda, descripción o proveedor" />
+    </div>
+    <div class="col-md-6 mb-2">
+        <label for="estadoFiltro" class="form-label">Filtrar por estado</label>
+        <select id="estadoFiltro" class="form-select">
+            <option value="">-- Todos --</option>
+            <option value="Pendiente" selected>Pendiente</option>
+            <option value="Pagada">Pagada</option>
+        </select>
+    </div>
 </div>
 
 <div class="table-responsive">
@@ -26,13 +36,14 @@
                 <th>Monto</th>
                 <th>Proveedor</th>
                 <th>Plazo para Pagar</th>
+                <th>Estado</th>
                 <th>Acciones</th>
             </tr>
         </thead>
         <tbody>
             @foreach (var item in Model)
             {
-                <tr>
+                <tr data-estado="@item.Estado">
                     <td>@item.NombreDeuda</td>
                     <td>@item.Fecha.ToString("yyyy-MM-dd")</td>
                     <td>@item.Descripcion</td>
@@ -40,20 +51,43 @@
                     <td>@item.Proveedor</td>
                     <td>@item.PlazaParaPagar.ToString("yyyy-MM-dd")</td>
                     <td>
-                        <a asp-action="Edit" asp-route-id="@item.Id" title="Editar"><i class="bi bi-pencil m-1"></i></a>
-                        <a href="#" class="text-danger eliminarCuenta"
-                           data-id="@item.Id"
-                           data-nombre="@item.NombreDeuda"
-                           data-bs-toggle="modal"
-                           data-bs-target="#confirmarEliminarModal"
-                           title="Eliminar">
-                            <i class="bi bi-trash m-1"></i>
-                        </a>
+                        <span class="badge @(item.Estado == "Pagada" ? "bg-success" : "bg-warning text-dark")">
+                            @item.Estado
+                        </span>
+                    </td>
+                    <td>
+                        @if (item.Estado != "Pagada")
+                        {
+                            <a asp-action="Edit" asp-route-id="@item.Id" title="Editar">
+                                <i class="bi bi-pencil m-1"></i>
+                            </a>
+                            <a href="#" class="text-danger eliminarCuenta"
+                               data-id="@item.Id"
+                               data-nombre="@item.NombreDeuda"
+                               data-bs-toggle="modal"
+                               data-bs-target="#confirmarEliminarModal"
+                               title="Eliminar">
+                                <i class="bi bi-trash m-1"></i>
+                            </a>
+                            <a asp-action="MarcarPagada" asp-route-id="@item.Id" title="Marcar como pagada" class="text-success ms-1">
+                                <i class="bi bi-cash-coin"></i>
+                            </a>
+                        }
+                        else
+                        {
+                            <span class="badge bg-success ms-1" title="Pagada">
+                                <i class="bi bi-check-circle"></i> Pagada
+                            </span>
+                        }
                     </td>
                 </tr>
             }
         </tbody>
     </table>
+
+    <div id="noRegistros" class="alert alert-warning text-center mt-3 d-none">
+        No hay registros que coincidan con la búsqueda o filtro seleccionado.
+    </div>
 </div>
 
 <!-- Modal de confirmación -->
@@ -104,18 +138,43 @@
                 dom: 'tp'
             });
 
+            function verificarRegistrosVisibles() {
+                const visibles = $('#tablaCuentasPorPagar tbody tr:visible').length;
+                if (visibles === 0) {
+                    $('#noRegistros').removeClass('d-none');
+                } else {
+                    $('#noRegistros').addClass('d-none');
+                }
+            }
+
             $('#searchInput').on('keyup', function () {
                 table.search(this.value).draw();
+                verificarRegistrosVisibles();
+            });
+
+            $('#estadoFiltro').on('change', function () {
+                const selectedEstado = this.value;
+                table.rows().every(function () {
+                    const rowEstado = $(this.node()).data('estado');
+                    if (selectedEstado === "" || rowEstado === selectedEstado) {
+                        $(this.node()).show();
+                    } else {
+                        $(this.node()).hide();
+                    }
+                });
+                verificarRegistrosVisibles();
             });
 
             let cuentaId = 0;
-
             $('.eliminarCuenta').on('click', function () {
                 cuentaId = $(this).data('id');
                 const nombre = $(this).data('nombre');
                 $('#nombreCuenta').text(nombre);
                 $('#formEliminar').attr('action', '/CuentasPorPagar/Delete/' + cuentaId);
             });
+
+            $('#estadoFiltro').trigger('change');
+            verificarRegistrosVisibles();
         });
     </script>
 }

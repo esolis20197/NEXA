@@ -62,6 +62,14 @@ namespace NEXA.Controllers
             var gasto = await _context.Gastos.FindAsync(id);
             if (gasto == null) return NotFound();
 
+            bool ligado = await _context.CuentasPorPagar.AnyAsync(c => c.GastoId == id);
+
+            if (ligado)
+            {
+                TempData["ErrorMensaje"] = $"No se puede editar el gasto \"{gasto.NombreGasto}\" porque está vinculado a una cuenta por pagar.";
+                return RedirectToAction(nameof(Index));
+            }
+
             return View(gasto);
         }
 
@@ -95,10 +103,22 @@ namespace NEXA.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var gasto = await _context.Gastos.FindAsync(id);
-            if (gasto != null)
+
+            if (gasto == null)
             {
-                _context.Gastos.Remove(gasto);
+                TempData["ErrorMensaje"] = "El gasto no fue encontrado.";
+                return RedirectToAction(nameof(Index));
             }
+
+            bool estaLigado = await _context.CuentasPorPagar.AnyAsync(c => c.GastoId == id);
+
+            if (estaLigado)
+            {
+                TempData["ErrorMensaje"] = $"No se puede eliminar el gasto \"{gasto.NombreGasto}\" porque está vinculado a una cuenta por pagar.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            _context.Gastos.Remove(gasto);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }

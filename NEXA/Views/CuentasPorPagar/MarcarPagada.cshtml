@@ -1,0 +1,45 @@
+﻿@model NEXA.Models.CuentaPorPagar
+@{
+    ViewData["Title"] = "Marcar como Pagada";
+    var categorias = ViewBag.Categorias as List<string>;
+    var fechaHoy = DateTime.Now.ToString("yyyy-MM-dd");
+}
+
+<div class="container py-4">
+    <div class="card shadow-sm p-4">
+        <h4 class="text-center mb-4">@ViewData["Title"]</h4>
+        <hr />
+        <form asp-action="MarcarPagada" method="post">
+            <input type="hidden" asp-for="Id" />
+
+            <div class="mb-3">
+                <label class="form-label">Motivo de la deuda</label>
+                <input class="form-control" value="@Model.NombreDeuda" readonly />
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Monto</label>
+                <input class="form-control" value="@Model.Monto.ToString("N2")" readonly />
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Proveedor</label>
+                <input class="form-control" value="@Model.Proveedor" readonly />
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Categoría de gasto</label>
+                <select class="form-select" name="categoria" required>
+                    <option value="">-- Selecciona una categoría --</option>
+                    @foreach (var cat in categorias)
+                    {
+                        <option value="@cat">@cat</option>
+                    }
+                </select>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Fecha de pago</label>
+                <input type="date" class="form-control" name="fechaPago" value="@fechaHoy" max="@fechaHoy" required />
+            </div>
+            <button type="submit" class="btn btn-success">Confirmar y Registrar Gasto</button>
+            <a asp-action="Index" class="btn btn-secondary ms-2">Cancelar</a>
+        </form>
+    </div>
+</div>

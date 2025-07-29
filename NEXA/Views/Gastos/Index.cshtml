@@ -11,9 +11,38 @@
     </a>
 </div>
 
-<div class="mb-3">
-    <label for="searchInput" class="form-label">Buscar</label>
-    <input type="text" id="searchInput" class="form-control" placeholder="Buscar por nombre, descripción o categoría" />
+@if (TempData["ErrorMensaje"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show mt-3" role="alert">
+        @TempData["ErrorMensaje"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+    </div>
+}
+
+@if (TempData["ExitoMensaje"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show mt-3" role="alert">
+        @TempData["ExitoMensaje"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+    </div>
+}
+
+<div class="row mb-3">
+    <div class="col-md-4 mb-2">
+        <label for="searchInput" class="form-label">Buscar</label>
+        <input type="text" id="searchInput" class="form-control" placeholder="Buscar por nombre, descripción o categoría" />
+    </div>
+    <div class="col-md-3 mb-2">
+        <label for="fechaDesde" class="form-label">Desde</label>
+        <input type="date" id="fechaDesde" class="form-control" />
+    </div>
+    <div class="col-md-3 mb-2">
+        <label for="fechaHasta" class="form-label">Hasta</label>
+        <input type="date" id="fechaHasta" class="form-control" />
+    </div>
+    <div class="col-md-2 mb-2 d-flex align-items-end">
+        <button id="limpiarFiltros" class="btn btn-outline-secondary w-100">Limpiar</button>
+    </div>
 </div>
 
 <div class="table-responsive">
@@ -52,6 +81,10 @@
             }
         </tbody>
     </table>
+
+    <div id="noRegistros" class="alert alert-warning text-center mt-3 d-none">
+        No hay registros que coincidan con la búsqueda o filtro seleccionado.
+    </div>
 </div>
 
 <!-- Modal de confirmación -->
@@ -90,6 +123,18 @@
 
     <script>
         $(document).ready(function () {
+            $.fn.dataTable.ext.search.push(function (settings, data) {
+                const fecha = new Date(data[1]);
+                const desde = $('#fechaDesde').val();
+                const hasta = $('#fechaHasta').val();
+
+                if ((desde && new Date(desde) > fecha) || (hasta && new Date(hasta) < fecha)) {
+                    return false;
+                }
+
+                return true;
+            });
+
             const table = $('#tablaGastos').DataTable({
                 language: {
                     url: "//cdn.datatables.net/plug-ins/1.10.25/i18n/Spanish.json"
@@ -102,20 +147,42 @@
                 dom: 'tp'
             });
 
+            function verificarRegistrosVisibles() {
+                const visibles = $('#tablaGastos tbody tr:visible').length;
+                if (visibles === 0) {
+                    $('#noRegistros').removeClass('d-none');
+                } else {
+                    $('#noRegistros').addClass('d-none');
+                }
+            }
+
             $('#searchInput').on('keyup', function () {
                 table.search(this.value).draw();
+                verificarRegistrosVisibles();
             });
 
-            let gastoId = 0;
+            $('#fechaDesde, #fechaHasta').on('change', function () {
+                table.draw();
+                verificarRegistrosVisibles();
+            });
+
+            $('#limpiarFiltros').on('click', function () {
+                $('#searchInput').val('');
+                $('#fechaDesde').val('');
+                $('#fechaHasta').val('');
+                table.search('').draw();
+                table.draw();
+                verificarRegistrosVisibles();
+            });
 
             $('.eliminarGasto').on('click', function () {
-                gastoId = $(this).data('id');
+                const id = $(this).data('id');
                 const nombre = $(this).data('nombre');
                 $('#nombreGasto').text(nombre);
-                $('#formEliminar').attr('action', '/Gastos/Delete/' + gastoId);
+                $('#formEliminar').attr('action', '/Gastos/Delete/' + id);
             });
 
-            
+            verificarRegistrosVisibles();
         });
     </script>
 }
