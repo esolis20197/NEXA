@@ -7,6 +7,7 @@ using iTextSharp.text.pdf;
 using System;
 using System.IO;
 using System.Linq;
+using NEXA.ViewModels;
 
 namespace NEXA.Controllers
 {
@@ -905,6 +906,443 @@ namespace NEXA.Controllers
         }
 
         #endregion
+
+        #region Gastos
+        public IActionResult ExcelGastos(DateTime? desde, DateTime? hasta)
+        {
+            RegistrarHistorial("Excel Gastos", $"Desde: {desde?.ToString("yyyy-MM-dd") ?? "N/A"}, Hasta: {hasta?.ToString("yyyy-MM-dd") ?? "N/A"}");
+
+            var datos = _context.Gastos.AsQueryable();
+            if (desde.HasValue) datos = datos.Where(g => g.Fecha >= desde.Value);
+            if (hasta.HasValue) datos = datos.Where(g => g.Fecha < hasta.Value.AddDays(1));
+
+            var lista = datos.ToList();
+            using var workbook = new XLWorkbook();
+            var ws = workbook.Worksheets.Add("Gastos");
+
+            var titulo = ws.Range(1, 1, 1, 5); titulo.Merge(); titulo.Value = "NEXA";
+            titulo.Style.Font.Bold = true; titulo.Style.Font.FontSize = 28;
+            titulo.Style.Font.FontColor = XLColor.White;
+            titulo.Style.Fill.BackgroundColor = XLColor.FromArgb(0, 70, 127);
+            titulo.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+            ws.Row(1).Height = 40;
+
+            string[] headers = { "Motivo", "Fecha", "Descripción", "Monto", "Categoría" };
+            for (int i = 0; i < headers.Length; i++) ws.Cell(2, i + 1).Value = headers[i];
+            var cabecera = ws.Range(2, 1, 2, headers.Length);
+            cabecera.Style.Font.Bold = true; cabecera.Style.Font.FontColor = XLColor.White;
+            cabecera.Style.Fill.BackgroundColor = XLColor.FromArgb(0, 112, 192);
+            cabecera.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+
+            int row = 3;
+            foreach (var g in lista)
+            {
+                ws.Cell(row, 1).Value = g.NombreGasto;
+                ws.Cell(row, 2).Value = g.Fecha.ToString("yyyy-MM-dd");
+                ws.Cell(row, 3).Value = g.Descripcion;
+                ws.Cell(row, 4).Value = g.Monto;
+                ws.Cell(row, 5).Value = g.Categoria;
+                row++;
+            }
+
+            ws.Columns().AdjustToContents();
+            using var stream = new MemoryStream(); workbook.SaveAs(stream);
+            return File(stream.ToArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "Gastos.xlsx");
+        }
+
+        public IActionResult PdfGastos(DateTime? desde, DateTime? hasta)
+        {
+            RegistrarHistorial("PDF Gastos", $"Desde: {desde?.ToString("yyyy-MM-dd") ?? "N/A"}, Hasta: {hasta?.ToString("yyyy-MM-dd") ?? "N/A"}");
+
+            var datos = _context.Gastos.AsQueryable();
+            if (desde.HasValue) datos = datos.Where(g => g.Fecha >= desde.Value);
+            if (hasta.HasValue) datos = datos.Where(g => g.Fecha < hasta.Value.AddDays(1));
+            var lista = datos.ToList();
+
+            using var stream = new MemoryStream();
+            var doc = new Document(PageSize.A4, 25, 25, 30, 30);
+            PdfWriter.GetInstance(doc, stream);
+            doc.Open();
+
+            var tablaTitulo = new PdfPTable(1) { WidthPercentage = 100, SpacingAfter = 15 };
+            var celdaTitulo = new PdfPCell(new Phrase("NEXA", FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 36, BaseColor.WHITE)))
+            {
+                HorizontalAlignment = Element.ALIGN_CENTER,
+                VerticalAlignment = Element.ALIGN_MIDDLE,
+                BackgroundColor = new BaseColor(0, 70, 127),
+                Border = PdfPCell.NO_BORDER,
+                FixedHeight = 50
+            };
+            tablaTitulo.AddCell(celdaTitulo);
+            doc.Add(tablaTitulo);
+
+            var subtitulo = new Paragraph("Reporte de Gastos")
+            {
+                Alignment = Element.ALIGN_CENTER,
+                SpacingAfter = 15,
+                Font = FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 18, BaseColor.DARK_GRAY)
+            };
+            doc.Add(subtitulo);
+
+            var fecha = new Paragraph($"Fecha: {DateTime.Now:yyyy-MM-dd HH:mm}")
+            {
+                Alignment = Element.ALIGN_RIGHT,
+                SpacingAfter = 15,
+                Font = FontFactory.GetFont(FontFactory.HELVETICA_OBLIQUE, 10, BaseColor.GRAY)
+            };
+            doc.Add(fecha);
+
+            var table = CrearTablaPdf(new[] { "Motivo", "Fecha", "Descripción", "Monto", "Categoría" });
+
+            foreach (var g in lista)
+            {
+                var cells = new[]
+                {
+            new PdfPCell(new Phrase(g.NombreGasto)),
+            new PdfPCell(new Phrase(g.Fecha.ToString("yyyy-MM-dd"))),
+            new PdfPCell(new Phrase(g.Descripcion)),
+            new PdfPCell(new Phrase(g.Monto.ToString("C2"))),
+            new PdfPCell(new Phrase(g.Categoria))
+        };
+                foreach (var c in cells) AplicarEstiloCeldaNormal(c);
+                foreach (var c in cells) table.AddCell(c);
+            }
+
+            doc.Add(table);
+            doc.Close();
+            return File(stream.ToArray(), "application/pdf", "Gastos.pdf");
+        }
+
+        #endregion
+
+        #region Cierre
+
+        private CierreViewModel ConstruirCierreViewModel(DateTime? desde, DateTime? hasta)
+        {
+            var model = new CierreViewModel
+            {
+                FechaDesde = desde ?? DateTime.Today,
+                FechaHasta = hasta ?? DateTime.Today,
+                TipoCierre = "Cierre de Caja",
+                RangoDescripcion = $"Desde {desde?.ToString("yyyy-MM-dd") ?? "N/A"} hasta {hasta?.ToString("yyyy-MM-dd") ?? "N/A"}"
+            };
+
+            // Gastos en rango
+            var gastosQuery = _context.Gastos.AsQueryable();
+            if (desde.HasValue) gastosQuery = gastosQuery.Where(g => g.Fecha >= desde.Value);
+            if (hasta.HasValue) gastosQuery = gastosQuery.Where(g => g.Fecha < hasta.Value.AddDays(1));
+            var gastosLista = gastosQuery.ToList();
+            model.TotalGastos = gastosLista.Sum(g => g.Monto);
+
+            // Cuentas por pagar pendientes en rango
+            var cuentasQuery = _context.CuentasPorPagar.AsQueryable();
+            if (desde.HasValue) cuentasQuery = cuentasQuery.Where(c => c.Fecha >= desde.Value);
+            if (hasta.HasValue) cuentasQuery = cuentasQuery.Where(c => c.Fecha < hasta.Value.AddDays(1));
+            cuentasQuery = cuentasQuery.Where(c => c.Estado == "Pendiente");
+            var cuentasLista = cuentasQuery.ToList();
+            model.TotalCuentasPorPagarPendientes = cuentasLista.Sum(c => c.Monto);
+            model.CuentasPendientesDetalle = cuentasLista;
+
+            // TODO: Ajusta cómo obtener las ganancias reales
+            model.TotalGanancias = 0m;
+
+            return model;
+        }
+
+        // Acción para mostrar vista
+        public IActionResult CierreCaja(DateTime? desde, DateTime? hasta)
+        {
+            var model = ConstruirCierreViewModel(desde, hasta);
+            ViewData["desdeCierre"] = desde?.ToString("yyyy-MM-dd") ?? "";
+            ViewData["hastaCierre"] = hasta?.ToString("yyyy-MM-dd") ?? "";
+            return View(model);
+        }
+
+        // Exportar Excel cierre
+        public IActionResult ExcelCierre(DateTime? desde, DateTime? hasta)
+        {
+            var model = ConstruirCierreViewModel(desde, hasta);
+
+            using var workbook = new XLWorkbook();
+            var ws = workbook.Worksheets.Add("Cierre de Caja");
+
+            // Título principal
+            var titulo = ws.Range(1, 1, 1, 2);
+            titulo.Merge();
+            titulo.Value = "NEXA - Cierre de Caja";
+            titulo.Style.Font.Bold = true;
+            titulo.Style.Font.FontSize = 28;
+            titulo.Style.Font.FontColor = XLColor.White;
+            titulo.Style.Fill.BackgroundColor = XLColor.FromArgb(0, 70, 127);
+            titulo.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+            ws.Row(1).Height = 40;
+
+            // Rango de fechas
+            ws.Cell(2, 1).Value = "Rango de fechas:";
+            ws.Cell(2, 2).Value = model.RangoDescripcion;
+            ws.Range(2, 1, 2, 2).Style.Font.Bold = true;
+            ws.Range(2, 1, 2, 2).Style.Fill.BackgroundColor = XLColor.FromArgb(217, 225, 242);
+
+            // Datos resumen
+            string[] labels = { "Total Ganancias", "Total Gastos", "Total Cuentas por Pagar Pendientes", "Balance" };
+            decimal[] values = { model.TotalGanancias, model.TotalGastos, model.TotalCuentasPorPagarPendientes, model.Balance };
+
+            for (int i = 0; i < labels.Length; i++)
+            {
+                ws.Cell(4 + i, 1).Value = labels[i];
+                ws.Cell(4 + i, 1).Style.Font.Bold = true;
+                ws.Cell(4 + i, 2).Value = values[i];
+                ws.Cell(4 + i, 2).Style.NumberFormat.Format = "$#,##0.00";
+            }
+
+            // Detalle cuentas por pagar pendientes
+            ws.Cell(9, 1).Value = "Detalle Cuentas por Pagar Pendientes";
+            ws.Cell(9, 1).Style.Font.Bold = true;
+            ws.Range(9, 1, 9, 2).Merge();
+            ws.Cell(10, 1).Value = "Descripción";
+            ws.Cell(10, 2).Value = "Monto";
+            ws.Range(10, 1, 10, 2).Style.Font.Bold = true;
+            ws.Range(10, 1, 10, 2).Style.Fill.BackgroundColor = XLColor.FromArgb(0, 112, 192);
+            ws.Range(10, 1, 10, 2).Style.Font.FontColor = XLColor.White;
+            ws.Range(10, 1, 10, 2).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+
+            int row = 11;
+            foreach (var cuenta in model.CuentasPendientesDetalle)
+            {
+                ws.Cell(row, 1).Value = cuenta.Descripcion;
+                ws.Cell(row, 2).Value = cuenta.Monto;
+                ws.Cell(row, 2).Style.NumberFormat.Format = "$#,##0.00";
+                row++;
+            }
+
+            ws.Columns().AdjustToContents();
+
+            using var stream = new MemoryStream();
+            workbook.SaveAs(stream);
+            return File(stream.ToArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "CierreCaja.xlsx");
+        }
+
+        // Exportar PDF cierre
+        public IActionResult PdfCierre(DateTime? desde, DateTime? hasta)
+        {
+            var model = ConstruirCierreViewModel(desde, hasta);
+
+            using var stream = new MemoryStream();
+            var doc = new Document(PageSize.A4, 25, 25, 30, 30);
+            PdfWriter.GetInstance(doc, stream);
+            doc.Open();
+
+            // Título grande fondo azul blanco
+            var titulo = new PdfPTable(1) { WidthPercentage = 100, SpacingAfter = 20 };
+            var celdaTitulo = new PdfPCell(new Phrase("NEXA - Cierre de Caja", FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 28, BaseColor.WHITE)))
+            {
+                HorizontalAlignment = Element.ALIGN_CENTER,
+                VerticalAlignment = Element.ALIGN_MIDDLE,
+                BackgroundColor = new BaseColor(0, 70, 127),
+                Border = PdfPCell.NO_BORDER,
+                FixedHeight = 45
+            };
+            titulo.AddCell(celdaTitulo);
+            doc.Add(titulo);
+
+            // Rango fechas
+            var rango = new Paragraph(model.RangoDescripcion, FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 12))
+            {
+                Alignment = Element.ALIGN_CENTER,
+                SpacingAfter = 15
+            };
+            doc.Add(rango);
+
+            // Tabla resumen con bordes
+            var tabla = new PdfPTable(2) { WidthPercentage = 80, HorizontalAlignment = Element.ALIGN_CENTER };
+            tabla.SetWidths(new float[] { 4, 2 });
+
+            // Función local para añadir celdas a la tabla
+            void AddCell(string text, bool isHeader = false, BaseColor bgColor = null)
+            {
+                var font = isHeader
+                    ? FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 12, BaseColor.WHITE)
+                    : FontFactory.GetFont(FontFactory.HELVETICA, 12);
+                var cell = new PdfPCell(new Phrase(text, font))
+                {
+                    BackgroundColor = bgColor ?? BaseColor.WHITE,
+                    Padding = 8,
+                    HorizontalAlignment = Element.ALIGN_LEFT,
+                    BorderWidth = 1
+                };
+                tabla.AddCell(cell);
+            }
+
+            AddCell("Concepto", true, new BaseColor(0, 112, 192));
+            AddCell("Monto", true, new BaseColor(0, 112, 192));
+
+            AddCell("Total Ganancias");
+            AddCell(model.TotalGanancias.ToString("C2"));
+            AddCell("Total Gastos");
+            AddCell(model.TotalGastos.ToString("C2"));
+            AddCell("Total Cuentas por Pagar Pendientes");
+            AddCell(model.TotalCuentasPorPagarPendientes.ToString("C2"));
+            AddCell("Balance");
+            AddCell(model.Balance.ToString("C2"));
+
+            doc.Add(tabla);
+
+            // Detalle cuentas por pagar
+            var detalleTitulo = new Paragraph("Detalle Cuentas por Pagar Pendientes", FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 14))
+            {
+                SpacingBefore = 25,
+                SpacingAfter = 10
+            };
+            doc.Add(detalleTitulo);
+
+            var tablaDetalle = new PdfPTable(2) { WidthPercentage = 100 };
+            tablaDetalle.SetWidths(new float[] { 7, 3 });
+
+            // Función local para añadir celdas en tabla detalle
+            void AddCellDetalle(PdfPTable tabla, string text, bool isHeader = false, BaseColor bgColor = null)
+            {
+                var font = isHeader
+                    ? FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 12, BaseColor.WHITE)
+                    : FontFactory.GetFont(FontFactory.HELVETICA, 12);
+                var cell = new PdfPCell(new Phrase(text, font))
+                {
+                    BackgroundColor = bgColor ?? BaseColor.WHITE,
+                    Padding = 6,
+                    HorizontalAlignment = Element.ALIGN_LEFT,
+                    BorderWidth = 1
+                };
+                tabla.AddCell(cell);
+            }
+
+            AddCellDetalle(tablaDetalle, "Descripción", true, new BaseColor(0, 112, 192));
+            AddCellDetalle(tablaDetalle, "Monto", true, new BaseColor(0, 112, 192));
+
+            foreach (var c in model.CuentasPendientesDetalle)
+            {
+                AddCellDetalle(tablaDetalle, c.Descripcion);
+                AddCellDetalle(tablaDetalle, c.Monto.ToString("C2"));
+            }
+
+            doc.Add(tablaDetalle);
+
+            doc.Close();
+            return File(stream.ToArray(), "application/pdf", "CierreCaja.pdf");
+        }
+
+        #endregion
+
+        #region CuentasPorPagar
+        public IActionResult ExcelCuentasPorPagar(DateTime? desde, DateTime? hasta)
+        {
+            RegistrarHistorial("Excel Cuentas por Pagar", $"Desde: {desde?.ToString("yyyy-MM-dd") ?? "N/A"}, Hasta: {hasta?.ToString("yyyy-MM-dd") ?? "N/A"}");
+
+            var datos = _context.CuentasPorPagar.AsQueryable();
+            if (desde.HasValue) datos = datos.Where(c => c.Fecha >= desde.Value);
+            if (hasta.HasValue) datos = datos.Where(c => c.Fecha < hasta.Value.AddDays(1));
+
+            var lista = datos.ToList();
+            using var workbook = new XLWorkbook();
+            var ws = workbook.Worksheets.Add("CuentasPorPagar");
+
+            var titulo = ws.Range(1, 1, 1, 7); titulo.Merge(); titulo.Value = "NEXA";
+            titulo.Style.Font.Bold = true; titulo.Style.Font.FontSize = 28;
+            titulo.Style.Font.FontColor = XLColor.White;
+            titulo.Style.Fill.BackgroundColor = XLColor.FromArgb(0, 70, 127);
+            titulo.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+            ws.Row(1).Height = 40;
+
+            string[] headers = { "Motivo", "Fecha", "Descripción", "Monto", "Proveedor", "Plazo para pagar", "Estado" };
+            for (int i = 0; i < headers.Length; i++) ws.Cell(2, i + 1).Value = headers[i];
+            var cabecera = ws.Range(2, 1, 2, headers.Length);
+            cabecera.Style.Font.Bold = true; cabecera.Style.Font.FontColor = XLColor.White;
+            cabecera.Style.Fill.BackgroundColor = XLColor.FromArgb(0, 112, 192);
+            cabecera.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+
+            int row = 3;
+            foreach (var c in lista)
+            {
+                ws.Cell(row, 1).Value = c.NombreDeuda;
+                ws.Cell(row, 2).Value = c.Fecha.ToString("yyyy-MM-dd");
+                ws.Cell(row, 3).Value = c.Descripcion;
+                ws.Cell(row, 4).Value = c.Monto;
+                ws.Cell(row, 5).Value = c.Proveedor;
+                ws.Cell(row, 6).Value = c.PlazaParaPagar.ToString("yyyy-MM-dd");
+                ws.Cell(row, 7).Value = c.Estado;
+                row++;
+            }
+
+            ws.Columns().AdjustToContents();
+            using var stream = new MemoryStream(); workbook.SaveAs(stream);
+            return File(stream.ToArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "CuentasPorPagar.xlsx");
+        }
+
+        public IActionResult PdfCuentasPorPagar(DateTime? desde, DateTime? hasta)
+        {
+            RegistrarHistorial("PDF Cuentas por Pagar", $"Desde: {desde?.ToString("yyyy-MM-dd") ?? "N/A"}, Hasta: {hasta?.ToString("yyyy-MM-dd") ?? "N/A"}");
+
+            var datos = _context.CuentasPorPagar.AsQueryable();
+            if (desde.HasValue) datos = datos.Where(c => c.Fecha >= desde.Value);
+            if (hasta.HasValue) datos = datos.Where(c => c.Fecha < hasta.Value.AddDays(1));
+            var lista = datos.ToList();
+
+            using var stream = new MemoryStream();
+            var doc = new Document(PageSize.A4, 25, 25, 30, 30);
+            PdfWriter.GetInstance(doc, stream);
+            doc.Open();
+
+            var tablaTitulo = new PdfPTable(1) { WidthPercentage = 100, SpacingAfter = 15 };
+            var celdaTitulo = new PdfPCell(new Phrase("NEXA", FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 36, BaseColor.WHITE)))
+            {
+                HorizontalAlignment = Element.ALIGN_CENTER,
+                VerticalAlignment = Element.ALIGN_MIDDLE,
+                BackgroundColor = new BaseColor(0, 70, 127),
+                Border = PdfPCell.NO_BORDER,
+                FixedHeight = 50
+            };
+            tablaTitulo.AddCell(celdaTitulo);
+            doc.Add(tablaTitulo);
+
+            var subtitulo = new Paragraph("Reporte de Cuentas por Pagar")
+            {
+                Alignment = Element.ALIGN_CENTER,
+                SpacingAfter = 15,
+                Font = FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 18, BaseColor.DARK_GRAY)
+            };
+            doc.Add(subtitulo);
+
+            var fecha = new Paragraph($"Fecha: {DateTime.Now:yyyy-MM-dd HH:mm}")
+            {
+                Alignment = Element.ALIGN_RIGHT,
+                SpacingAfter = 15,
+                Font = FontFactory.GetFont(FontFactory.HELVETICA_OBLIQUE, 10, BaseColor.GRAY)
+            };
+            doc.Add(fecha);
+
+            var table = CrearTablaPdf(new[] { "Motivo", "Fecha", "Descripción", "Monto", "Proveedor", "Plazo", "Estado" });
+
+            foreach (var c in lista)
+            {
+                var cells = new[]
+                {
+            new PdfPCell(new Phrase(c.NombreDeuda)),
+            new PdfPCell(new Phrase(c.Fecha.ToString("yyyy-MM-dd"))),
+            new PdfPCell(new Phrase(c.Descripcion)),
+            new PdfPCell(new Phrase(c.Monto.ToString("C2"))),
+            new PdfPCell(new Phrase(c.Proveedor)),
+            new PdfPCell(new Phrase(c.PlazaParaPagar.ToString("yyyy-MM-dd"))),
+            new PdfPCell(new Phrase(c.Estado))
+        };
+                foreach (var cell in cells) AplicarEstiloCeldaNormal(cell);
+                foreach (var cell in cells) table.AddCell(cell);
+            }
+
+            doc.Add(table);
+            doc.Close();
+            return File(stream.ToArray(), "application/pdf", "CuentasPorPagar.pdf");
+        }
+
+        #endregion
+
 
     }
 }

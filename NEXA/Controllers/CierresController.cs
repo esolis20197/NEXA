@@ -122,27 +122,50 @@ namespace NEXA.Controllers
             {
                 var worksheet = workbook.Worksheets.Add("Cierre");
 
-                worksheet.Cell(1, 1).Value = $"Cierre {TipoCierre}";
-                worksheet.Cell(2, 1).Value = $"Desde: {FechaDesde:dd/MM/yyyy}";
-                worksheet.Cell(2, 2).Value = $"Hasta: {FechaHasta:dd/MM/yyyy}";
+                // TÍTULO PRINCIPAL
+                var titulo = worksheet.Range(1, 1, 1, 5);
+                titulo.Merge();
+                titulo.Value = "NEXA";
+                titulo.Style.Font.Bold = true;
+                titulo.Style.Font.FontSize = 28;
+                titulo.Style.Font.FontColor = XLColor.White;
+                titulo.Style.Fill.BackgroundColor = XLColor.FromArgb(0, 70, 127);
+                titulo.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+                worksheet.Row(1).Height = 40;
 
-                worksheet.Cell(4, 1).Value = "Ganancias";
-                worksheet.Cell(4, 2).Value = ingresos;
+                // SUBTÍTULO
+                worksheet.Cell(2, 1).Value = $"Cierre {TipoCierre}";
+                worksheet.Cell(3, 1).Value = $"Desde: {FechaDesde:dd/MM/yyyy}";
+                worksheet.Cell(3, 2).Value = $"Hasta: {FechaHasta:dd/MM/yyyy}";
 
-                worksheet.Cell(5, 1).Value = "Gastos";
-                worksheet.Cell(5, 2).Value = gastos;
+                // RESUMEN
+                worksheet.Cell(5, 1).Value = "Ganancias";
+                worksheet.Cell(5, 2).Value = ingresos;
 
-                worksheet.Cell(6, 1).Value = "Cuentas por Pagar Pendientes";
-                worksheet.Cell(6, 2).Value = cuentasPendientes.Sum(c => c.Monto);
+                worksheet.Cell(6, 1).Value = "Gastos";
+                worksheet.Cell(6, 2).Value = gastos;
 
-                worksheet.Cell(8, 1).Value = "Detalle Cuentas por Pagar";
-                worksheet.Cell(9, 1).Value = "Motivo";
-                worksheet.Cell(9, 2).Value = "Descripción";
-                worksheet.Cell(9, 3).Value = "Proveedor";
-                worksheet.Cell(9, 4).Value = "Monto";
-                worksheet.Cell(9, 5).Value = "Plazo para pagar";
+                worksheet.Cell(7, 1).Value = "Cuentas por Pagar Pendientes";
+                worksheet.Cell(7, 2).Value = cuentasPendientes.Sum(c => c.Monto);
 
-                int row = 10;
+                // DETALLE
+                worksheet.Cell(9, 1).Value = "Detalle Cuentas por Pagar";
+                worksheet.Cell(9, 1).Style.Font.Bold = true;
+
+                // ENCABEZADOS DE LA TABLA
+                string[] headers = { "Motivo", "Descripción", "Proveedor", "Monto", "Plazo para pagar" };
+                for (int i = 0; i < headers.Length; i++)
+                {
+                    var cell = worksheet.Cell(10, i + 1);
+                    cell.Value = headers[i];
+                    cell.Style.Font.Bold = true;
+                    cell.Style.Font.FontColor = XLColor.White;
+                    cell.Style.Fill.BackgroundColor = XLColor.FromArgb(0, 112, 192);
+                    cell.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+                }
+
+                // DATOS
+                int row = 11;
                 foreach (var item in cuentasPendientes)
                 {
                     worksheet.Cell(row, 1).Value = item.NombreDeuda;
@@ -153,6 +176,8 @@ namespace NEXA.Controllers
                     row++;
                 }
 
+                worksheet.Columns().AdjustToContents();
+
                 using (var stream = new System.IO.MemoryStream())
                 {
                     workbook.SaveAs(stream);
@@ -161,6 +186,7 @@ namespace NEXA.Controllers
                     return File(content, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", nombreArchivo);
                 }
             }
+
         }
 
         [HttpPost]
@@ -184,18 +210,35 @@ namespace NEXA.Controllers
 
             using (var ms = new System.IO.MemoryStream())
             {
-                // Crear documento
                 var doc = new Document(PageSize.A4, 40, 40, 40, 40);
                 var writer = PdfWriter.GetInstance(doc, ms);
                 doc.Open();
 
-                // Definir fuentes y colores
+                // Colores y fuentes
                 var colorPrincipal = new BaseColor(33, 150, 243); // azul
+                var fondoAzul = new BaseColor(0, 70, 127);        // azul oscuro nexa
                 var fontTitulo = FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 20, colorPrincipal);
                 var fontSubtitulo = FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 14, BaseColor.BLACK);
                 var fontNormal = FontFactory.GetFont(FontFactory.HELVETICA, 11, BaseColor.BLACK);
                 var fontTablaHeader = FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 11, BaseColor.WHITE);
-                var fondoHeaderTabla = new BaseColor(51, 122, 183); // azul oscuro tabla
+                var fondoHeaderTabla = new BaseColor(51, 122, 183);
+
+                // NUEVO: Encabezado "NEXA" centrado con fondo azul oscuro
+                var encabezado = new PdfPTable(1)
+                {
+                    WidthPercentage = 100,
+                    SpacingAfter = 20f
+                };
+                var celdaEncabezado = new PdfPCell(new Phrase("NEXA", FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 28, BaseColor.WHITE)))
+                {
+                    BackgroundColor = fondoAzul,
+                    HorizontalAlignment = Element.ALIGN_CENTER,
+                    VerticalAlignment = Element.ALIGN_MIDDLE,
+                    Border = PdfPCell.NO_BORDER,
+                    FixedHeight = 45f
+                };
+                encabezado.AddCell(celdaEncabezado);
+                doc.Add(encabezado);
 
                 // Título centrado
                 var titulo = new Paragraph($"Cierre {TipoCierre}", fontTitulo)
@@ -248,7 +291,6 @@ namespace NEXA.Controllers
                 float[] widths = { 20f, 28f, 18f, 12f, 18f };
                 table.SetWidths(widths);
 
-                // Encabezado de tabla con color
                 string[] headers = { "Motivo", "Descripción", "Proveedor", "Monto", "Plazo para pagar" };
                 foreach (var header in headers)
                 {
@@ -261,7 +303,6 @@ namespace NEXA.Controllers
                     table.AddCell(cell);
                 }
 
-                // Filas de datos
                 foreach (var item in cuentasPendientes)
                 {
                     table.AddCell(new PdfPCell(new Phrase(item.NombreDeuda ?? "", fontNormal)) { Padding = 5f });
@@ -278,6 +319,7 @@ namespace NEXA.Controllers
                 return File(ms.ToArray(), "application/pdf", nombreArchivo);
             }
         }
+
 
     }
 }
