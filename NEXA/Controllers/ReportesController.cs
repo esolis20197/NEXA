@@ -383,9 +383,45 @@ namespace NEXA.Controllers
 
         #region Pedidos
 
+        public IActionResult Pedidos(DateTime? desde, DateTime? hasta)
+        {
+            RegistrarHistorial("Consulta Pedidos",
+                $"Desde: {desde?.ToString("yyyy-MM-dd") ?? "N/A"}, Hasta: {hasta?.ToString("yyyy-MM-dd") ?? "N/A"}");
+
+            var datos = _context.Pedidos
+                .Include(p => p.Usuario)
+                .Include(p => p.Detalles)
+                    .ThenInclude(d => d.Inventario)
+                .AsQueryable();
+
+            if (desde.HasValue)
+                datos = datos.Where(p => p.FechaPedido >= desde.Value);
+
+            if (hasta.HasValue)
+                datos = datos.Where(p => p.FechaPedido <= hasta.Value);
+
+            var lista = datos
+                .OrderByDescending(p => p.FechaPedido)
+                .ToList();
+
+            ViewData["desdePedido"] = desde?.ToString("yyyy-MM-dd");
+            ViewData["hastaPedido"] = hasta?.ToString("yyyy-MM-dd");
+
+            // Pasar el mensaje de alerta a la vista si existe
+            // Verificar si no hay datos
+            if (!lista.Any())
+            {
+                TempData["Alerta"] = "No hay pedidos en el rango de fechas seleccionado.";
+                return RedirectToAction("Todos"); 
+            }
+
+            return View(lista);
+        }
+
         public IActionResult ExcelPedidos(DateTime? desde, DateTime? hasta)
         {
-            RegistrarHistorial("Excel Pedidos", $"Desde: {desde?.ToString("yyyy-MM-dd") ?? "N/A"}, Hasta: {hasta?.ToString("yyyy-MM-dd") ?? "N/A"}");
+            RegistrarHistorial("Excel Pedidos",
+                $"Desde: {desde?.ToString("yyyy-MM-dd") ?? "N/A"}, Hasta: {hasta?.ToString("yyyy-MM-dd") ?? "N/A"}");
 
             var datos = _context.Pedidos
                 .Include(p => p.Usuario)
@@ -400,10 +436,17 @@ namespace NEXA.Controllers
 
             var lista = datos.ToList();
 
+            // Verificar si no hay datos
+            if (!lista.Any())
+            {
+                TempData["Alerta"] = "No hay pedidos en el rango de fechas seleccionado.";
+                return RedirectToAction("Todos"); // Cambia "Index" por la vista donde tengas el filtro
+            }
+
             using var workbook = new XLWorkbook();
             var ws = workbook.Worksheets.Add("Pedidos");
 
-            // Título "NEXA" en grande con estilo
+            // Título
             var rangoTitulo = ws.Range(1, 1, 1, 7);
             rangoTitulo.Merge();
             rangoTitulo.Value = "NEXA";
@@ -412,12 +455,12 @@ namespace NEXA.Controllers
             rangoTitulo.Style.Font.FontColor = XLColor.White;
             rangoTitulo.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
             rangoTitulo.Style.Alignment.Vertical = XLAlignmentVerticalValues.Center;
-            rangoTitulo.Style.Fill.BackgroundColor = XLColor.FromArgb(0, 70, 127); // Azul oscuro
+            rangoTitulo.Style.Fill.BackgroundColor = XLColor.FromArgb(0, 70, 127);
             rangoTitulo.Style.Border.OutsideBorder = XLBorderStyleValues.Thick;
             rangoTitulo.Style.Border.OutsideBorderColor = XLColor.Black;
             ws.Row(1).Height = 40;
 
-            // Cabecera con estilo
+            // Cabecera
             ws.Cell(2, 1).Value = "ID Pedido";
             ws.Cell(2, 2).Value = "Usuario";
             ws.Cell(2, 3).Value = "Fecha Pedido";
@@ -475,7 +518,8 @@ namespace NEXA.Controllers
 
         public IActionResult PdfPedidos(DateTime? desde, DateTime? hasta)
         {
-            RegistrarHistorial("PDF Pedidos", $"Desde: {desde?.ToString("yyyy-MM-dd") ?? "N/A"}, Hasta: {hasta?.ToString("yyyy-MM-dd") ?? "N/A"}");
+            RegistrarHistorial("PDF Pedidos",
+                $"Desde: {desde?.ToString("yyyy-MM-dd") ?? "N/A"}, Hasta: {hasta?.ToString("yyyy-MM-dd") ?? "N/A"}");
 
             var datos = _context.Pedidos
                 .Include(p => p.Usuario)
@@ -490,12 +534,18 @@ namespace NEXA.Controllers
 
             var lista = datos.ToList();
 
+            if (!lista.Any())
+            {
+                TempData["Alerta"] = "No se encontraron pedidos en el rango de fechas seleccionado.";
+                return RedirectToAction("Pedidos", new { desde, hasta });
+            }
+
             using var stream = new MemoryStream();
             var doc = new Document(PageSize.A4.Rotate(), 25, 25, 30, 30);
             PdfWriter.GetInstance(doc, stream);
             doc.Open();
 
-            // Título NEXA grande con texto blanco y fondo azul (tabla con 1 celda)
+            // Título NEXA
             var tablaTitulo = new PdfPTable(1)
             {
                 WidthPercentage = 100,
@@ -512,7 +562,6 @@ namespace NEXA.Controllers
             tablaTitulo.AddCell(celdaTitulo);
             doc.Add(tablaTitulo);
 
-            // Subtítulo con color gris oscuro
             var titulo = new Paragraph("Reporte de Pedidos con Detalles")
             {
                 Alignment = Element.ALIGN_CENTER,
@@ -521,7 +570,6 @@ namespace NEXA.Controllers
             };
             doc.Add(titulo);
 
-            // Fecha en cursiva y gris
             var fecha = new Paragraph($"Fecha: {DateTime.Now:yyyy-MM-dd HH:mm}")
             {
                 Alignment = Element.ALIGN_RIGHT,
@@ -534,7 +582,7 @@ namespace NEXA.Controllers
                 new[] { "ID Pedido", "Usuario", "Fecha Pedido", "Estado", "Producto", "Cantidad", "Precio Unitario" },
                 new float[] { 7f, 20f, 12f, 12f, 25f, 8f, 12f });
 
-            // Aplicar estilo cabecera tabla (fondo azul oscuro, texto blanco)
+            // Cabecera tabla
             for (int i = 0; i < 7; i++)
             {
                 var cell = table.GetRow(0).GetCells()[i];
@@ -595,8 +643,6 @@ namespace NEXA.Controllers
 
         public IActionResult ExcelCitas(DateTime? desde, DateTime? hasta)
         {
-            RegistrarHistorial("Excel Citas", $"Desde: {desde?.ToString("yyyy-MM-dd") ?? "N/A"}, Hasta: {hasta?.ToString("yyyy-MM-dd") ?? "N/A"}");
-
             var datos = _context.Citas.Include(c => c.Usuario).AsQueryable();
 
             if (desde.HasValue)
@@ -606,10 +652,19 @@ namespace NEXA.Controllers
 
             var lista = datos.ToList();
 
+            // Verificar si no hay datos
+            if (!lista.Any())
+            {
+                TempData["Alerta"] = "No hay citas en el rango de fechas seleccionado.";
+                return RedirectToAction("Todos"); // Cambia "Index" por la vista donde tengas el filtro
+            }
+
+            RegistrarHistorial("Excel Citas", $"Desde: {desde?.ToString("yyyy-MM-dd") ?? "N/A"}, Hasta: {hasta?.ToString("yyyy-MM-dd") ?? "N/A"}");
+
             using var workbook = new XLWorkbook();
             var ws = workbook.Worksheets.Add("Citas");
 
-            // Título "NEXA" en grande con estilo
+            // Título "NEXA"
             var rangoTitulo = ws.Range(1, 1, 1, 5);
             rangoTitulo.Merge();
             rangoTitulo.Value = "NEXA";
@@ -618,12 +673,12 @@ namespace NEXA.Controllers
             rangoTitulo.Style.Font.FontColor = XLColor.White;
             rangoTitulo.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
             rangoTitulo.Style.Alignment.Vertical = XLAlignmentVerticalValues.Center;
-            rangoTitulo.Style.Fill.BackgroundColor = XLColor.FromArgb(0, 70, 127); // Azul oscuro
+            rangoTitulo.Style.Fill.BackgroundColor = XLColor.FromArgb(0, 70, 127);
             rangoTitulo.Style.Border.OutsideBorder = XLBorderStyleValues.Thick;
             rangoTitulo.Style.Border.OutsideBorderColor = XLColor.Black;
             ws.Row(1).Height = 40;
 
-            // Cabecera con estilo
+            // Cabecera
             ws.Cell(2, 1).Value = "Nombre Cita";
             ws.Cell(2, 2).Value = "Tipo Cita";
             ws.Cell(2, 3).Value = "Fecha Cita";
@@ -660,8 +715,6 @@ namespace NEXA.Controllers
 
         public IActionResult PdfCitas(DateTime? desde, DateTime? hasta)
         {
-            RegistrarHistorial("PDF Citas", $"Desde: {desde?.ToString("yyyy-MM-dd") ?? "N/A"}, Hasta: {hasta?.ToString("yyyy-MM-dd") ?? "N/A"}");
-
             var datos = _context.Citas.Include(c => c.Usuario).AsQueryable();
 
             if (desde.HasValue)
@@ -671,12 +724,21 @@ namespace NEXA.Controllers
 
             var lista = datos.ToList();
 
+            // Verificar si no hay datos
+            if (!lista.Any())
+            {
+                TempData["Alerta"] = "No hay citas en el rango de fechas seleccionado.";
+                return RedirectToAction("Todos"); // Cambia "Index" por la vista donde tengas el filtro
+            }
+
+            RegistrarHistorial("PDF Citas", $"Desde: {desde?.ToString("yyyy-MM-dd") ?? "N/A"}, Hasta: {hasta?.ToString("yyyy-MM-dd") ?? "N/A"}");
+
             using var stream = new MemoryStream();
             var doc = new Document(PageSize.A4, 25, 25, 30, 30);
             PdfWriter.GetInstance(doc, stream);
             doc.Open();
 
-            // Título NEXA grande con texto blanco y fondo azul (tabla con 1 celda)
+            // Título NEXA
             var tablaTitulo = new PdfPTable(1)
             {
                 WidthPercentage = 100,
@@ -693,7 +755,7 @@ namespace NEXA.Controllers
             tablaTitulo.AddCell(celdaTitulo);
             doc.Add(tablaTitulo);
 
-            // Subtítulo con color gris oscuro
+            // Subtítulo
             var titulo = new Paragraph("Reporte de Citas")
             {
                 Alignment = Element.ALIGN_CENTER,
@@ -702,7 +764,7 @@ namespace NEXA.Controllers
             };
             doc.Add(titulo);
 
-            // Fecha en cursiva y gris
+            // Fecha
             var fecha = new Paragraph($"Fecha: {DateTime.Now:yyyy-MM-dd HH:mm}")
             {
                 Alignment = Element.ALIGN_RIGHT,
@@ -713,7 +775,7 @@ namespace NEXA.Controllers
 
             var table = CrearTablaPdf(new[] { "Nombre Cita", "Tipo Cita", "Fecha Cita", "Encargado", "Estado" });
 
-            // Aplicar estilo cabecera tabla (fondo azul oscuro, texto blanco)
+            // Cabecera tabla
             for (int i = 0; i < 5; i++)
             {
                 var cell = table.GetRow(0).GetCells()[i];
@@ -761,6 +823,11 @@ namespace NEXA.Controllers
                 datos = datos.Where(p => p.FechaInicio <= hasta.Value);
 
             var lista = datos.ToList();
+            if (!lista.Any())
+            {
+                TempData["Alerta"] = "No hay proyectos en el rango de fechas seleccionado.";
+                return RedirectToAction("Todos");
+            }
 
             using var workbook = new XLWorkbook();
             var ws = workbook.Worksheets.Add("Proyectos");
@@ -828,6 +895,11 @@ namespace NEXA.Controllers
                 datos = datos.Where(p => p.FechaInicio <= hasta.Value);
 
             var lista = datos.ToList();
+            if (!lista.Any())
+            {
+                TempData["Alerta"] = "No hay proyectos en el rango de fechas seleccionado.";
+                return RedirectToAction("Todos");
+            }
 
             using var stream = new MemoryStream();
             var doc = new Document(PageSize.A4, 25, 25, 30, 30);
@@ -908,6 +980,7 @@ namespace NEXA.Controllers
         #endregion
 
         #region Gastos
+
         public IActionResult ExcelGastos(DateTime? desde, DateTime? hasta)
         {
             RegistrarHistorial("Excel Gastos", $"Desde: {desde?.ToString("yyyy-MM-dd") ?? "N/A"}, Hasta: {hasta?.ToString("yyyy-MM-dd") ?? "N/A"}");
@@ -917,11 +990,22 @@ namespace NEXA.Controllers
             if (hasta.HasValue) datos = datos.Where(g => g.Fecha < hasta.Value.AddDays(1));
 
             var lista = datos.ToList();
+
+            // Verificar si no hay datos
+            if (!lista.Any())
+            {
+                TempData["Alerta"] = "No hay gastos en el rango de fechas seleccionado.";
+                return RedirectToAction("Todos"); // Cambia "Todos" si necesitas otra acción
+            }
+
             using var workbook = new XLWorkbook();
             var ws = workbook.Worksheets.Add("Gastos");
 
-            var titulo = ws.Range(1, 1, 1, 5); titulo.Merge(); titulo.Value = "NEXA";
-            titulo.Style.Font.Bold = true; titulo.Style.Font.FontSize = 28;
+            var titulo = ws.Range(1, 1, 1, 5);
+            titulo.Merge();
+            titulo.Value = "NEXA";
+            titulo.Style.Font.Bold = true;
+            titulo.Style.Font.FontSize = 28;
             titulo.Style.Font.FontColor = XLColor.White;
             titulo.Style.Fill.BackgroundColor = XLColor.FromArgb(0, 70, 127);
             titulo.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
@@ -930,7 +1014,8 @@ namespace NEXA.Controllers
             string[] headers = { "Motivo", "Fecha", "Descripción", "Monto", "Categoría" };
             for (int i = 0; i < headers.Length; i++) ws.Cell(2, i + 1).Value = headers[i];
             var cabecera = ws.Range(2, 1, 2, headers.Length);
-            cabecera.Style.Font.Bold = true; cabecera.Style.Font.FontColor = XLColor.White;
+            cabecera.Style.Font.Bold = true;
+            cabecera.Style.Font.FontColor = XLColor.White;
             cabecera.Style.Fill.BackgroundColor = XLColor.FromArgb(0, 112, 192);
             cabecera.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
 
@@ -946,7 +1031,8 @@ namespace NEXA.Controllers
             }
 
             ws.Columns().AdjustToContents();
-            using var stream = new MemoryStream(); workbook.SaveAs(stream);
+            using var stream = new MemoryStream();
+            workbook.SaveAs(stream);
             return File(stream.ToArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "Gastos.xlsx");
         }
 
@@ -957,7 +1043,15 @@ namespace NEXA.Controllers
             var datos = _context.Gastos.AsQueryable();
             if (desde.HasValue) datos = datos.Where(g => g.Fecha >= desde.Value);
             if (hasta.HasValue) datos = datos.Where(g => g.Fecha < hasta.Value.AddDays(1));
+
             var lista = datos.ToList();
+
+            // Verificar si no hay datos
+            if (!lista.Any())
+            {
+                TempData["Alerta"] = "No hay gastos en el rango de fechas seleccionado.";
+                return RedirectToAction("Todos"); // Cambia "Todos" si necesitas otra acción
+            }
 
             using var stream = new MemoryStream();
             var doc = new Document(PageSize.A4, 25, 25, 30, 30);
