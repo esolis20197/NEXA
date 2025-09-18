@@ -40,6 +40,8 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts(); // Habilitar HSTS (HTTP Strict Transport Security)
 }
 
+Console.WriteLine($"Environment: {builder.Environment.EnvironmentName}");
+
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 

@@ -47,12 +47,7 @@
             </div>
         </div>
 
-        <div class="mt-4">
-            @* Mostrar botones según rol de usuario *@
-            @if (usuarioRol == "Administrador" || usuarioRol == "Empleado")
-            {
-                <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary me-2">Editar</a>
-            }
+        <div class="mt-4">            
             <a asp-action="Index" class="btn btn-secondary">Volver al listado</a>
         </div>
     </div>

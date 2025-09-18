@@ -8,6 +8,7 @@ using System;
 using System.IO;
 using System.Linq;
 using NEXA.ViewModels;
+using NEXA.Filters;
 
 namespace NEXA.Controllers
 {
@@ -21,7 +22,8 @@ namespace NEXA.Controllers
         }
 
         // Vista principal de reportes con filtros básicos
-        public IActionResult Todos(string desdePedido = "", string hastaPedido = "", string desdeCita = "", string hastaCita = "", string desdeProyecto = "", string hastaProyecto = "")
+        public IActionResult Todos(string desdePedido = "", string hastaPedido = "", string desdeCita = "", string hastaCita = "",
+                                    string desdeProyecto = "", string hastaProyecto = "", string desdeGasto = "", string hastaGasto = "")
         {
             ViewData["desdePedido"] = desdePedido;
             ViewData["hastaPedido"] = hastaPedido;
@@ -29,6 +31,8 @@ namespace NEXA.Controllers
             ViewData["hastaCita"] = hastaCita;
             ViewData["desdeProyecto"] = desdeProyecto;
             ViewData["hastaProyecto"] = hastaProyecto;
+            ViewData["desdeGasto"] = desdeGasto;
+            ViewData["hastaGasto"] = hastaGasto;
 
             var historial = _context.ReporteHistoriales
                 .OrderByDescending(h => h.FechaGeneracion)
