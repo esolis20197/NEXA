@@ -13,22 +13,26 @@ namespace NEXA.Models
         [Key]
         public int Id { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "El campo 'Nombre' es obligatorio.")]
         public string Nombre { get; set; }
 
         [DataType(DataType.Date)]
         [Display(Name = "Fecha de Inicio")]
+        [Required(ErrorMessage = "La fecha de inicio es obligatoria.")]
         public DateTime FechaInicio { get; set; }
 
         [DataType(DataType.Date)]
         [Display(Name = "Fecha de Fin")]
+        [Required(ErrorMessage = "La fecha de fin es obligatoria.")]
         public DateTime FechaFin { get; set; }
 
+        [Required(ErrorMessage = "La descripción es obligatoria.")]
         public string Descripcion { get; set; }
-
+        [Required(ErrorMessage = "La foto no es valida")]
         public string Fotos { get; set; }
 
         [ForeignKey("Usuario")]
+        [Required(ErrorMessage = "El usuario es obligatorio.")]
         public int UsuarioID { get; set; }
 
         public string estado { get; set; } = "Pendiente";
@@ -38,8 +42,6 @@ namespace NEXA.Models
         public bool RequiereDocumentos { get; set; } = false;
 
         public ICollection<PermisoInstalacion> PermisosInstalacion { get; set; } = new List<PermisoInstalacion>();
-
-
 
         // Validaciones personalizadas
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
